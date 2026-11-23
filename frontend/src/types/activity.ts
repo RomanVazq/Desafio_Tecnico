@@ -7,6 +7,12 @@ export type StatusFilter = ActivityStatus | ''
 export const PRIORITIES = ['baja', 'media', 'alta'] as const
 export type ActivityPriority = (typeof PRIORITIES)[number]
 
+/** Vistas del sidebar. Las de prioridad reutilizan ActivityPriority. */
+export type ActivityView = 'hoy' | 'proximos' | 'todas' | ActivityPriority
+
+/** Chips de filtro rápido del header. */
+export type ActivityFilterChip = 'all' | 'pending' | 'priority'
+
 export interface Activity {
   id: number
   title: string

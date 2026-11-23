@@ -7,6 +7,9 @@ import 'quasar/dist/quasar.css'
 
 import App from './App.vue'
 import router from './router'
+import { BRAND } from './constants/theme'
+
+import './css/app.css'
 
 createApp(App)
   .use(router)
@@ -14,15 +17,7 @@ createApp(App)
     plugins: { Dialog, Notify },
     lang: quasarLang,
     config: {
-      brand: {
-        primary: '#2563EB',
-        secondary: '#0F172A',
-        accent: '#0EA5E9',
-        dark: '#1E293B',
-        positive: '#16A34A',
-        negative: '#DC2626',
-        warning: '#D97706',
-      },
+      brand: BRAND,
     },
   })
   .mount('#app')
