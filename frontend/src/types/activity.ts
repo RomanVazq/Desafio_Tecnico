@@ -7,9 +7,12 @@ export type StatusFilter = ActivityStatus | ''
 export const PRIORITIES = ['baja', 'media', 'alta'] as const
 export type ActivityPriority = (typeof PRIORITIES)[number]
 
+/** El valor vacío representa "Todas" y nunca se envía como parámetro a la API. */
+export type PriorityFilter = ActivityPriority | ''
+
 export type ActivityView = 'hoy' | 'proximos' | 'todas' | ActivityPriority
 
-export type ActivityFilterChip = 'all' | 'pending' | 'priority'
+export type ActivityFilterChip = 'all' | 'pending' | 'progress' | 'priority'
 
 export interface Activity {
   id: number
@@ -35,6 +38,7 @@ export type ActivityUpdatePayload = Partial<ActivityPayload>
 export interface ActivityFilters {
   q: string
   status: StatusFilter
+  priority: PriorityFilter
 }
 
 export interface PaginationLinks {

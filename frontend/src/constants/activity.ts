@@ -4,6 +4,7 @@ import {
   type ActivityPayload,
   type ActivityPriority,
   type ActivityStatus,
+  type PriorityFilter,
   type StatusFilter,
 } from '../types/activity'
 
@@ -38,6 +39,11 @@ export const PRIORITY_OPTIONS: readonly SelectOption<ActivityPriority>[] = PRIOR
   label: PRIORITY_LABELS[value],
   value,
 }))
+
+export const PRIORITY_FILTER_OPTIONS: readonly SelectOption<PriorityFilter>[] = [
+  { label: 'Todas', value: '' },
+  ...PRIORITY_OPTIONS,
+]
 
 export const STATUS_COLORS: Record<ActivityStatus, string> = {
   pendiente: 'grey-7',

@@ -11,7 +11,7 @@ import type {
 
 
 export interface ActivityRepository {
-  list(filters: ActivityFilters): Promise<PaginatedResponse<Activity>>
+  list(filters: ActivityFilters, page?: number): Promise<PaginatedResponse<Activity>>
   find(id: number): Promise<Activity>
   create(payload: ActivityPayload): Promise<Activity>
   update(id: number, payload: ActivityUpdatePayload): Promise<Activity>
@@ -21,10 +21,13 @@ export interface ActivityRepository {
 const RESOURCE = '/activities'
 
 export const httpActivityRepository: ActivityRepository = {
-  list({ q, status }) {
+  list(filters, page) {
+    const { q, status, priority } = filters
     return http.get<PaginatedResponse<Activity>>(RESOURCE, {
       q: q || undefined,
       status: status || undefined,
+      priority: priority || undefined,
+      page: page && page > 1 ? page : undefined,
     })
   },
 

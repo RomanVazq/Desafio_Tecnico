@@ -1,25 +1,43 @@
 <script setup lang="ts">
-import type { ActivityFilterChip } from '../types/activity'
+import { PRIORITY_FILTER_OPTIONS, STATUS_FILTER_OPTIONS } from '../constants/activity'
+import type {
+  ActivityFilterChip,
+  PriorityFilter,
+  StatusFilter,
+} from '../types/activity'
 
 defineProps<{
   filter: ActivityFilterChip
   search: string
+  status: StatusFilter
+  priority: PriorityFilter
 }>()
 
 const emit = defineEmits<{
   'update:filter': [value: ActivityFilterChip]
   'update:search': [value: string]
+  'update:status': [value: StatusFilter]
+  'update:priority': [value: PriorityFilter]
 }>()
 
 const chips: { value: ActivityFilterChip; label: string }[] = [
   { value: 'all', label: 'Todas' },
   { value: 'pending', label: 'Pendientes' },
-  { value: 'priority', label: 'Prioridad' },
+  { value: 'progress', label: 'En progreso' },
+  { value: 'priority', label: 'Ordenar' },
 ]
+
+function setStatus(value: unknown): void {
+  emit('update:status', (value ?? '') as StatusFilter)
+}
+
+function setPriority(value: unknown): void {
+  emit('update:priority', (value ?? '') as PriorityFilter)
+}
 </script>
 
 <template>
-  <div class="row items-center justify-between q-gutter-md">
+  <div class="row items-center justify-between q-gutter-md wrap">
     <div class="row q-gutter-sm">
       <q-chip
         v-for="chip in chips"
@@ -31,6 +49,32 @@ const chips: { value: ActivityFilterChip; label: string }[] = [
         :class="{ 'filter-chip--active': filter === chip.value }"
         :label="chip.label"
         @click="emit('update:filter', chip.value)"
+      />
+    </div>
+
+    <div class="row items-center q-gutter-sm">
+      <q-select
+        :model-value="status"
+        :options="STATUS_FILTER_OPTIONS"
+        emit-value
+        map-options
+        dense
+        outlined
+        label="Estado"
+        style="min-width: 140px"
+        @update:model-value="setStatus"
+      />
+
+      <q-select
+        :model-value="priority"
+        :options="PRIORITY_FILTER_OPTIONS"
+        emit-value
+        map-options
+        dense
+        outlined
+        label="Prioridad"
+        style="min-width: 140px"
+        @update:model-value="setPriority"
       />
     </div>
 

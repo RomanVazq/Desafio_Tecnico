@@ -27,11 +27,15 @@ const activitiesModule = useActivities(httpActivityRepository)
 
 const {
   activities,
+  meta,
   filters,
   loading,
+  loadingMore,
+  hasMore,
   saving,
   error,
   load,
+  loadMore,
   create,
   update,
   remove,
@@ -62,9 +66,12 @@ function sortByPriority(list: Activity[]): Activity[] {
 }
 
 const filteredPending = computed(() => {
-  const result = chipFilter.value === 'pending'
-    ? pending.value.filter((activity) => activity.status === 'pendiente')
-    : pending.value
+  let result = pending.value
+  if (chipFilter.value === 'pending') {
+    result = result.filter((activity) => activity.status === 'pendiente')
+  } else if (chipFilter.value === 'progress') {
+    result = result.filter((activity) => activity.status === 'en_progreso')
+  }
   return sortByPriority(result)
 })
 
@@ -194,6 +201,8 @@ function handleRemove(activity: Activity): void {
           <ActivityFilterChips
             v-model:filter="chipFilter"
             v-model:search="filters.q"
+            v-model:status="filters.status"
+            v-model:priority="filters.priority"
           />
 
           <QuickAddForm :loading="saving" @submit="handleQuickAdd" />
@@ -231,6 +240,24 @@ function handleRemove(activity: Activity): void {
               @edit="openEdit"
               @remove="handleRemove"
             />
+
+            <div v-if="hasMore" class="row justify-center q-pt-md">
+              <q-btn
+                outline
+                color="primary"
+                icon="expand_more"
+                label="Cargar más"
+                :loading="loadingMore"
+                @click="loadMore"
+              />
+            </div>
+
+            <div
+              v-else-if="meta && activities.length > 0"
+              class="text-center text-caption text-grey-7 q-pt-md"
+            >
+              Mostrando {{ activities.length }} de {{ meta.total }} actividades
+            </div>
           </template>
         </div>
       </q-page>
