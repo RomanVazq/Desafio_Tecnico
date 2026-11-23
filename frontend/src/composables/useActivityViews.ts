@@ -12,12 +12,9 @@ function isoAfter(days: number): string {
 
 const UPCOMING_ISO = isoAfter(7)
 
-/** Concentra la lógica de las vistas del sidebar, sin tocar la API ni el estado del composable. */
 export function useActivityViews(activities: () => Activity[]) {
   const activeView = ref<ActivityView>('hoy')
 
-  // La vista decide por fecha; el status se separa después en `pending` / `completed`.
-  // Si filtráramos acá las completadas, la sección "Completadas" siempre quedaría vacía.
   const isToday = (activity: Activity): boolean =>
     Boolean(activity.due_date && activity.due_date <= TODAY_ISO)
 
@@ -43,7 +40,6 @@ export function useActivityViews(activities: () => Activity[]) {
     const all = activities()
     const open = (activity: Activity): boolean => activity.status !== 'completada'
     return {
-      // Los badges del sidebar muestran tareas abiertas, como en el diseño original.
       hoy: all.filter((activity) => isToday(activity) && open(activity)).length,
       proximos: all.filter((activity) => isUpcoming(activity) && open(activity)).length,
       todas: all.filter(open).length,
