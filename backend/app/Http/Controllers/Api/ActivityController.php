@@ -16,7 +16,7 @@ class ActivityController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $requsest): ActivityCollection
+    public function index(Request $request): ActivityCollection
     {
         $query = Activity::query();
 

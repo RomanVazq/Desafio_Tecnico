@@ -3,16 +3,15 @@
 namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateActivityRequest extends FormRequest
+class UpdateActivityRequest extends StoreActivityRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -25,6 +24,6 @@ class UpdateActivityRequest extends FormRequest
         return array_map(
             fn (array $rules): array => array_merge(['sometimes'], $rules),
             parent::rules(),
-            );
+        );
     }
 }
