@@ -1,0 +1,29 @@
+# Dependencias
+**/vendor/
+**/node_modules/
+
+# Entorno (nunca commitear .env real)
+**/.env
+!**/.env.example
+
+# Base local SQLite
+backend/database/*.sqlite
+backend/database/*.sqlite-journal
+
+# Builds
+frontend/dist/
+frontend/.quasar/
+
+# Caches y logs de Laravel
+*.log
+backend/storage/framework/cache/data/
+backend/storage/framework/sessions/
+backend/storage/framework/views/
+backend/bootstrap/cache/*
+!backend/bootstrap/cache/.gitignore
+
+# Editor / SO
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
