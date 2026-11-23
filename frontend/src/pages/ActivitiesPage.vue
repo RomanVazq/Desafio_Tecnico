@@ -1,15 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-const search = ref('')
-const status = ref('todos')
+import { STATUS_FILTER_OPTIONS } from '../constants/activity'
+import type { StatusFilter } from '../types/activity'
 
-const statusOptions = [
-  { label: 'Todos', value: 'todos' },
-  { label: 'Pendiente', value: 'pendiente' },
-  { label: 'En progreso', value: 'en_progreso' },
-  { label: 'Completada', value: 'completada' },
-]
+const search = ref('')
+const status = ref<StatusFilter>('')
 </script>
 
 <template>
@@ -38,7 +34,7 @@ const statusOptions = [
             <div class="col-12 col-sm-6 col-md-3">
               <q-select
                 v-model="status"
-                :options="statusOptions"
+                :options="STATUS_FILTER_OPTIONS"
                 emit-value
                 map-options
                 dense
