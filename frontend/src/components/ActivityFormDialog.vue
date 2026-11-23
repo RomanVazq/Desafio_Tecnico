@@ -26,6 +26,10 @@ const emit = defineEmits<{
 const isDetail = computed(() => props.mode === 'detail')
 const form = ref<ActivityPayload>(createDefaultActivityPayload())
 
+const titleRules = [
+  (value: string | null) => Boolean(value?.trim()) || 'El título es obligatorio.',
+]
+
 function formatDateTime(value: string | null): string {
   if (!value) return '—'
   const date = new Date(value)
@@ -68,81 +72,91 @@ function submit(): void {
 <template>
   <q-dialog :model-value="modelValue" @update:model-value="emit('update:modelValue', Boolean($event))">
     <q-card style="min-width: 320px; max-width: 480px">
-      <q-card-section>
-        <div class="text-h6 text-headline">
-          {{ isDetail ? 'Detalle de la actividad' : 'Editar actividad' }}
-        </div>
-        <div v-if="isDetail && activity" class="text-caption text-grey-7 q-mt-xs">
-          #{{ activity.id }}
-        </div>
-      </q-card-section>
+      <q-form @submit.prevent="submit">
+        <q-card-section>
+          <div class="text-h6 text-headline">
+            {{ isDetail ? 'Detalle de la actividad' : 'Editar actividad' }}
+          </div>
+          <div v-if="isDetail && activity" class="text-caption text-grey-7 q-mt-xs">
+            #{{ activity.id }}
+          </div>
+        </q-card-section>
 
-      <q-card-section class="q-gutter-md">
-        <q-input v-model="form.title" label="Título" outlined dense :readonly="isDetail" />
-
-        <q-input
-          :model-value="form.description ?? ''"
-          label="Descripción"
-          type="textarea"
-          outlined
-          dense
-          :readonly="isDetail"
-          @update:model-value="form.description = String($event ?? '') || null"
-        />
-
-        <div class="row q-gutter-md">
-          <q-select
-            v-model="form.status"
-            :options="STATUS_OPTIONS"
-            emit-value
-            map-options
-            label="Estado"
+        <q-card-section class="q-gutter-md">
+          <q-input
+            v-model="form.title"
+            label="Título"
             outlined
             dense
-            class="col"
-            :disable="isDetail"
+            :readonly="isDetail"
+            :rules="titleRules"
+            lazy-rules="ondemand"
           />
-          <q-select
-            v-model="form.priority"
-            :options="PRIORITY_OPTIONS"
-            emit-value
-            map-options
-            label="Prioridad"
+
+          <q-input
+            :model-value="form.description ?? ''"
+            label="Descripción"
+            type="textarea"
             outlined
             dense
-            class="col"
-            :disable="isDetail"
+            :readonly="isDetail"
+            @update:model-value="form.description = String($event ?? '') || null"
           />
-        </div>
 
-        <q-input
-          :model-value="form.due_date ?? ''"
-          label="Fecha límite"
-          placeholder="YYYY-MM-DD"
-          outlined
-          dense
-          :readonly="isDetail"
-          @update:model-value="form.due_date = String($event ?? '') || null"
-        />
+          <div class="row q-gutter-md">
+            <q-select
+              v-model="form.status"
+              :options="STATUS_OPTIONS"
+              emit-value
+              map-options
+              label="Estado"
+              outlined
+              dense
+              class="col"
+              :disable="isDetail"
+            />
+            <q-select
+              v-model="form.priority"
+              :options="PRIORITY_OPTIONS"
+              emit-value
+              map-options
+              label="Prioridad"
+              outlined
+              dense
+              class="col"
+              :disable="isDetail"
+            />
+          </div>
 
-        <div v-if="isDetail && activity" class="column q-gutter-xs text-caption text-grey-7">
-          <div>Creada: {{ formatDateTime(activity.created_at) }}</div>
-          <div>Actualizada: {{ formatDateTime(activity.updated_at) }}</div>
-        </div>
-      </q-card-section>
+          <q-input
+            :model-value="form.due_date ?? ''"
+            label="Fecha límite"
+            placeholder="YYYY-MM-DD"
+            outlined
+            dense
+            :readonly="isDetail"
+            @update:model-value="form.due_date = String($event ?? '') || null"
+          />
 
-      <q-card-actions align="right">
-        <q-btn flat label="Cerrar" color="grey-7" @click="close" />
-        <q-btn
-          v-if="isDetail"
-          unelevated
-          label="Editar"
-          icon="edit"
-          color="primary"
-          @click="emit('edit')"
-        />
-        <q-btn v-else unelevated label="Guardar" color="primary" @click="submit" />
-      </q-card-actions>
+          <div v-if="isDetail && activity" class="column q-gutter-xs text-caption text-grey-7">
+            <div>Creada: {{ formatDateTime(activity.created_at) }}</div>
+            <div>Actualizada: {{ formatDateTime(activity.updated_at) }}</div>
+          </div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Cerrar" color="grey-7" @click="close" />
+          <q-btn
+            v-if="isDetail"
+            unelevated
+            label="Editar"
+            icon="edit"
+            color="primary"
+            @click="emit('edit')"
+          />
+          <q-btn v-else type="submit" unelevated label="Guardar" color="primary" />
+        </q-card-actions>
+      </q-form>
     </q-card>
   </q-dialog>
 </template>

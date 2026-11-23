@@ -18,6 +18,10 @@ const description = ref('')
 const priority = ref<ActivityPriority>(PRIORITIES[1])
 const dueDate = ref<string | null>(TODAY_ISO)
 
+const titleRules = [
+  (value: string | null) => Boolean(value?.trim()) || 'El título es obligatorio.',
+]
+
 function handleSubmit(): void {
   const value = title.value.trim()
   if (!value) return
@@ -32,7 +36,7 @@ function handleSubmit(): void {
 </script>
 
 <template>
-  <form
+  <q-form
     class="row items-center q-gutter-sm q-pa-md rounded-borders bg-white"
     style="border: 1px solid rgba(0, 0, 0, 0.12)"
     @submit.prevent="handleSubmit"
@@ -46,6 +50,8 @@ function handleSubmit(): void {
           dense
           placeholder="Añadir una tarea para hoy..."
           class="col"
+          :rules="titleRules"
+          lazy-rules="ondemand"
         />
       </div>
       <q-input
@@ -79,5 +85,5 @@ function handleSubmit(): void {
       :loading="loading"
       class="col-12 col-sm-auto"
     />
-  </form>
+  </q-form>
 </template>
