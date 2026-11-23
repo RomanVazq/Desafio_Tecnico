@@ -122,4 +122,35 @@ class ActivityApiTest extends TestCase
 
         $this->assertDatabaseMissing('activities', ['id' => $activity->id]);
     }
+
+    public function test_puede_filtrar_por_prioridad(): void
+    {
+        Activity::create(['title' => 'Urgente', 'status' => 'pendiente', 'priority' => 'alta']);
+        Activity::create(['title' => 'Normal', 'status' => 'pendiente', 'priority' => 'baja']);
+
+        $this->getJson('/api/activities?priority=alta')
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.title', 'Urgente');
+    }
+
+    public function test_valida_y_combina_filtros_del_listado(): void
+    {
+        Activity::create(['title' => 'Urgente', 'status' => 'pendiente', 'priority' => 'alta']);
+        Activity::create(['title' => 'Urgente hecha', 'status' => 'completada', 'priority' => 'alta']);
+        Activity::create(['title' => 'Normal', 'status' => 'pendiente', 'priority' => 'baja']);
+
+        $this->getJson('/api/activities?status=pendiente&priority=alta')
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.title', 'Urgente');
+
+        $this->getJson('/api/activities?status=invalido')
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['status']);
+
+        $this->getJson('/api/activities?priority=invalida')
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['priority']);
+    }
 }
