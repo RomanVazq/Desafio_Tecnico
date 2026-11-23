@@ -13,6 +13,7 @@ defineProps<{
 
 const emit = defineEmits<{
   toggle: [activity: Activity]
+  progress: [activity: Activity]
   detail: [activity: Activity]
   edit: [activity: Activity]
   remove: [activity: Activity]
@@ -53,6 +54,7 @@ const visible = ref(true)
         :key="activity.id"
         :activity="activity"
         @toggle="emit('toggle', activity)"
+        @progress="emit('progress', activity)"
         @detail="emit('detail', activity)"
         @edit="emit('edit', activity)"
         @remove="emit('remove', activity)"
