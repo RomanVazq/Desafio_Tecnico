@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PRIORITY_OPTIONS } from '../constants/activity'
+import { PRIORITY_COLORS, PRIORITY_OPTIONS } from '../constants/activity'
 import { TODAY_LABEL } from '../constants/theme'
 import type { ActivityView } from '../types/activity'
 
@@ -20,11 +20,8 @@ const primaryViews: { key: ActivityView; label: string; icon: string }[] = [
 </script>
 
 <template>
-  <aside
-    class="column justify-between q-pa-md"
-    style="width: 240px; height: 100vh; position: sticky; top: 0; border-right: 1px solid rgba(0, 0, 0, 0.08)"
-  >
-    <div class="column q-gutter-lg">
+  <aside class="column justify-between q-pa-md full-height">
+    <div class="column q-gutter-md" style="min-height: 0; overflow-y: auto">
       <div class="row items-center q-gutter-sm q-px-sm">
         <div class="brand-mark">
           <q-icon name="check_circle" />
@@ -69,7 +66,15 @@ const primaryViews: { key: ActivityView; label: string; icon: string }[] = [
             <q-item-section avatar>
               <q-icon name="flag" size="20px" />
             </q-item-section>
-            <q-item-section>{{ option.label }}</q-item-section>
+            <q-item-section>
+              <q-chip
+                dense
+                class="priority-chip"
+                :color="PRIORITY_COLORS[option.value]"
+                text-color="white"
+                :label="option.label"
+              />
+            </q-item-section>
             <q-item-section side>
               <span class="text-caption text-grey-7">{{ counts[option.value] }}</span>
             </q-item-section>

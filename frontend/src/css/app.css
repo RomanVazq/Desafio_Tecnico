@@ -29,3 +29,11 @@ body {
 .filter-chip--active {
   border-color: var(--q-primary) !important;
 }
+
+.priority-chip {
+  min-width: 64px;
+}
+
+.priority-chip .q-chip__content {
+  justify-content: center;
+}
