@@ -29,8 +29,8 @@ function statusLabel(value: ActivityStatus): string {
 </script>
 
 <template>
-  <q-item class="q-px-md q-py-sm">
-    <q-item-section avatar top style="min-width: 72px">
+  <q-item class="activity-item q-px-md q-py-sm">
+    <q-item-section avatar top class="activity-actions" style="min-width: 0">
       <div class="row items-center q-gutter-xs">
         <q-btn
           flat
@@ -60,20 +60,25 @@ function statusLabel(value: ActivityStatus): string {
       </div>
     </q-item-section>
 
-    <q-item-section>
+    <q-item-section class="activity-content">
       <q-item-label
+        class="activity-title"
         :class="activity.status === 'completada' ? 'text-grey-6 text-strike' : 'text-grey-9'"
       >
         {{ activity.title }}
       </q-item-label>
-      <q-item-label v-if="activity.description || activity.due_date" caption>
+      <q-item-label
+        v-if="activity.description || activity.due_date"
+        caption
+        class="activity-description"
+      >
         {{ activity.description }}
         <span v-if="activity.due_date">· {{ activity.due_date }}</span>
       </q-item-label>
     </q-item-section>
 
-    <q-item-section side top>
-      <div class="row items-center q-gutter-sm">
+    <q-item-section side top class="activity-side">
+      <div class="row items-center justify-end q-gutter-sm wrap">
         <q-chip
           v-if="activity.status === 'en_progreso'"
           dense

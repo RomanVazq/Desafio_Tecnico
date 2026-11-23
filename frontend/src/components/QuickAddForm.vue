@@ -41,7 +41,7 @@ function handleSubmit(): void {
     style="border: 1px solid rgba(0, 0, 0, 0.12)"
     @submit.prevent="handleSubmit"
   >
-    <div class="col column q-gutter-xs">
+    <div class="col-12 col-sm column q-gutter-xs">
       <div class="row items-center q-gutter-sm">
         <q-icon name="add_circle" color="primary" size="20px" />
         <q-input

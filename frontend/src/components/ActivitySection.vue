@@ -24,9 +24,9 @@ const visible = ref(true)
 
 <template>
   <section class="column q-gutter-sm">
-    <div class="row items-center justify-between q-px-xs">
+    <div class="row items-center justify-between q-gutter-xs wrap q-px-xs">
       <h2
-        class="text-subtitle2 text-weight-medium q-ma-none"
+        class="text-subtitle2 text-weight-medium q-ma-none ellipsis"
         :class="completed ? 'text-grey-7' : 'text-grey-9'"
       >
         {{ title }}
@@ -63,7 +63,7 @@ const visible = ref(true)
 
     <div
       v-else-if="visible"
-      class="q-pa-xl text-center rounded-borders bg-grey-1 text-grey-7"
+      class="q-pa-lg text-center rounded-borders bg-grey-1 text-grey-7"
     >
       {{ emptyMessage }}
     </div>

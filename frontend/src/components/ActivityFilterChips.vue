@@ -37,8 +37,8 @@ function setPriority(value: unknown): void {
 </script>
 
 <template>
-  <div class="row items-center justify-between q-gutter-md wrap">
-    <div class="row q-gutter-sm">
+  <div class="filter-bar row items-center justify-between q-gutter-md wrap">
+    <div class="row q-gutter-sm wrap">
       <q-chip
         v-for="chip in chips"
         :key="chip.value"
@@ -52,7 +52,7 @@ function setPriority(value: unknown): void {
       />
     </div>
 
-    <div class="row items-center q-gutter-sm">
+    <div class="row items-center q-gutter-sm wrap">
       <q-select
         :model-value="status"
         :options="STATUS_FILTER_OPTIONS"
@@ -61,7 +61,8 @@ function setPriority(value: unknown): void {
         dense
         outlined
         label="Estado"
-        style="min-width: 140px"
+        class="filter-select col-12 col-sm-auto"
+        style="width: 140px"
         @update:model-value="setStatus"
       />
 
@@ -73,7 +74,8 @@ function setPriority(value: unknown): void {
         dense
         outlined
         label="Prioridad"
-        style="min-width: 140px"
+        class="filter-select col-12 col-sm-auto"
+        style="width: 140px"
         @update:model-value="setPriority"
       />
     </div>
@@ -85,7 +87,8 @@ function setPriority(value: unknown): void {
       clearable
       placeholder="Buscar tarea..."
       prepend-inner-icon="search"
-      style="width: 260px"
+      class="activity-search col-12 col-sm-auto"
+      style="width: 288px"
       @update:model-value="emit('update:search', String($event ?? ''))"
     />
   </div>

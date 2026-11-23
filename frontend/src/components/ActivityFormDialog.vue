@@ -71,7 +71,7 @@ function submit(): void {
 
 <template>
   <q-dialog :model-value="modelValue" @update:model-value="emit('update:modelValue', Boolean($event))">
-    <q-card style="min-width: 320px; max-width: 480px">
+    <q-card style="width: 100%; max-width: 480px">
       <q-form @submit.prevent="submit">
         <q-card-section>
           <div class="text-h6 text-headline">
@@ -103,7 +103,7 @@ function submit(): void {
             @update:model-value="form.description = String($event ?? '') || null"
           />
 
-          <div class="row q-gutter-md">
+          <div class="row q-gutter-sm wrap">
             <q-select
               v-model="form.status"
               :options="STATUS_OPTIONS"
@@ -112,7 +112,7 @@ function submit(): void {
               label="Estado"
               outlined
               dense
-              class="col"
+              class="col-12 col-sm"
               :disable="isDetail"
             />
             <q-select
@@ -123,7 +123,7 @@ function submit(): void {
               label="Prioridad"
               outlined
               dense
-              class="col"
+              class="col-12 col-sm"
               :disable="isDetail"
             />
           </div>
@@ -144,7 +144,7 @@ function submit(): void {
           </div>
         </q-card-section>
 
-        <q-card-actions align="right">
+        <q-card-actions align="right" class="wrap">
           <q-btn flat label="Cerrar" color="grey-7" @click="close" />
           <q-btn
             v-if="isDetail"

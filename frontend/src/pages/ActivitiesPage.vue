@@ -178,19 +178,23 @@ function handleRemove(activity: Activity): void {
     </q-drawer>
 
     <q-header class="bg-white text-dark lt-md" bordered>
-      <q-toolbar class="q-px-lg">
+      <q-toolbar :class="$q.screen.lt.sm ? 'q-px-sm' : 'q-px-lg'">
         <q-btn flat dense round icon="menu" class="q-mr-sm" @click="drawerOpen = true" />
         <div class="brand-mark brand-mark--sm q-mr-sm">
           <q-icon name="check_circle" />
         </div>
         <q-toolbar-title class="text-weight-medium">TaskFlow</q-toolbar-title>
-        <span class="text-caption text-grey-7">{{ TODAY_LABEL }}</span>
+        <span class="text-caption text-grey-7 ellipsis">{{ TODAY_LABEL }}</span>
       </q-toolbar>
     </q-header>
 
     <q-page-container class="bg-grey-1">
-      <q-page class="q-pa-lg">
-        <div class="q-mx-auto column q-gutter-xl" style="max-width: 860px">
+      <q-page :class="$q.screen.lt.sm ? 'q-pa-sm' : 'q-pa-lg'">
+        <div
+          class="q-mx-auto column"
+          :class="$q.screen.lt.sm ? 'q-gutter-md' : $q.screen.lt.lg ? 'q-gutter-lg' : 'q-gutter-xl'"
+          style="max-width: 860px"
+        >
           <DailyHeader
             :date="TODAY_LABEL"
             :title="viewTitles[activeView]"

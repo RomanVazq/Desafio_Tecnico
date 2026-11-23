@@ -1,5 +1,71 @@
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 body {
   font-family: 'Instrument Sans', sans-serif;
+}
+
+.activity-title {
+  overflow-wrap: anywhere;
+}
+
+.activity-description {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 599px) {
+  .filter-bar {
+    justify-content: flex-start !important;
+  }
+
+  .filter-select {
+    flex: 0 0 140px !important;
+    width: 140px !important;
+    max-width: 140px !important;
+  }
+
+  .activity-search {
+    flex: 0 0 288px !important;
+    width: 288px !important;
+    max-width: 288px !important;
+  }
+
+  .activity-item {
+    flex-wrap: wrap;
+  }
+
+  .activity-actions {
+    order: 1;
+    flex: 0 0 auto;
+  }
+
+  .activity-side {
+    order: 2;
+    flex: 0 1 auto;
+    min-width: 0;
+    margin-left: auto;
+  }
+
+  .activity-content {
+    order: 3;
+    flex: 0 0 100%;
+    min-width: 0;
+    padding-top: 2px;
+  }
+
+  .activity-title,
+  .activity-description {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    white-space: normal;
+  }
 }
 
 .text-headline {
