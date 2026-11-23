@@ -8,7 +8,7 @@ import ActivitySection from '../components/ActivitySection.vue'
 import AppSidebar from '../components/AppSidebar.vue'
 import DailyHeader from '../components/DailyHeader.vue'
 import QuickAddForm from '../components/QuickAddForm.vue'
-import { createDefaultActivityPayload } from '../constants/activity'
+import { PRIORITY_RANK, createDefaultActivityPayload } from '../constants/activity'
 import { TODAY_LABEL } from '../constants/theme'
 import { useActivities } from '../composables/useActivities'
 import { useActivityViews } from '../composables/useActivityViews'
@@ -56,17 +56,19 @@ const dialogOpen = ref(false)
 const dialogMode = ref<'edit' | 'detail'>('edit')
 const editing = ref<Activity | null>(null)
 
+function sortByPriority(list: Activity[]): Activity[] {
+  if (chipFilter.value !== 'priority') return list
+  return [...list].sort((a, b) => PRIORITY_RANK[b.priority] - PRIORITY_RANK[a.priority])
+}
+
 const filteredPending = computed(() => {
-  let result = pending.value
-  if (chipFilter.value === 'pending') {
-    result = result.filter((activity) => activity.status === 'pendiente')
-  } else if (chipFilter.value === 'priority') {
-    result = result.filter((activity) => activity.priority === 'alta')
-  }
-  return result
+  const result = chipFilter.value === 'pending'
+    ? pending.value.filter((activity) => activity.status === 'pendiente')
+    : pending.value
+  return sortByPriority(result)
 })
 
-const filteredCompleted = computed(() => completed.value)
+const filteredCompleted = computed(() => sortByPriority(completed.value))
 
 const progress = computed(() => {
   const total = filteredPending.value.length + filteredCompleted.value.length
@@ -91,7 +93,11 @@ function handleQuickAdd(
   payload.due_date = dueDate
 
   void create(payload).then((ok) => {
-    if (ok) $q.notify({ type: 'positive', message: 'Actividad agregada.' })
+    if (ok) {
+      $q.notify({ type: 'positive', message: 'Actividad agregada.' })
+    } else {
+      $q.notify({ type: 'negative', message: error.value ?? 'No se pudo agregar la actividad.' })
+    }
   })
 }
 
@@ -121,12 +127,19 @@ function handleDialogSubmit(payload: ActivityPayload): void {
     if (ok) {
       $q.notify({ type: 'positive', message: target ? 'Actividad actualizada.' : 'Actividad creada.' })
       editing.value = null
+    } else {
+      $q.notify({ type: 'negative', message: error.value ?? 'No se pudo guardar la actividad.' })
     }
   })
 }
 
 function handleToggle(activity: Activity): void {
   const next: ActivityStatus = activity.status === 'completada' ? 'pendiente' : 'completada'
+  void changeStatus(activity.id, next)
+}
+
+function handleProgress(activity: Activity): void {
+  const next: ActivityStatus = activity.status === 'en_progreso' ? 'pendiente' : 'en_progreso'
   void changeStatus(activity.id, next)
 }
 
@@ -201,6 +214,7 @@ function handleRemove(activity: Activity): void {
               :activities="filteredPending"
               empty-message="No quedan tareas pendientes con este filtro."
               @toggle="handleToggle"
+              @progress="handleProgress"
               @detail="openDetail"
               @edit="openEdit"
               @remove="handleRemove"
@@ -212,6 +226,7 @@ function handleRemove(activity: Activity): void {
               empty-message="Todavía no hay tareas completadas."
               completed
               @toggle="handleToggle"
+              @progress="handleProgress"
               @detail="openDetail"
               @edit="openEdit"
               @remove="handleRemove"

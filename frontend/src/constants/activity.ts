@@ -51,6 +51,10 @@ export const PRIORITY_COLORS: Record<ActivityPriority, string> = {
   alta: 'negative',
 }
 
+export const PRIORITY_RANK = Object.fromEntries(
+  PRIORITIES.map((priority, index) => [priority, index]),
+) as Record<ActivityPriority, number>
+
 export function createDefaultActivityPayload(): ActivityPayload {
   return {
     title: '',
