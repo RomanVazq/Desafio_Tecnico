@@ -56,16 +56,17 @@ class ActivityController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id): ActivityResource
     {
         $activity = Activity::findOrFail($id);
+
         return new ActivityResource($activity);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateActivityRequest $request, string $id)
+    public function update(UpdateActivityRequest $request, string $id): ActivityResource
     {
         $activity = Activity::findOrFail($id);
         $activity->update($request->validated());
