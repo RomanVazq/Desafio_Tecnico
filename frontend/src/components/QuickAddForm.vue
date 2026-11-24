@@ -37,8 +37,7 @@ function handleSubmit(): void {
 
 <template>
   <q-form
-    class="row items-center q-gutter-sm q-pa-md rounded-borders bg-white"
-    style="border: 1px solid rgba(0, 0, 0, 0.12)"
+    class="row items-center q-gutter-sm q-pa-md rounded-borders surface-card subtle-border"
     @submit.prevent="handleSubmit"
   >
     <div class="col-12 col-sm column q-gutter-xs">

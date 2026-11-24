@@ -37,7 +37,7 @@ const primaryViews: { key: ActivityView; label: string; icon: string }[] = [
           dense
           class="rounded-borders"
           :active="active === item.key"
-          active-class="bg-blue-1 text-primary"
+          active-class="nav-active"
           @click="emit('select', item.key)"
         >
           <q-item-section avatar>
@@ -45,13 +45,13 @@ const primaryViews: { key: ActivityView; label: string; icon: string }[] = [
           </q-item-section>
           <q-item-section>{{ item.label }}</q-item-section>
           <q-item-section side>
-            <span class="text-caption text-grey-7">{{ counts[item.key] }}</span>
+            <span class="text-caption text-muted text-mono">{{ counts[item.key] }}</span>
           </q-item-section>
         </q-item>
       </nav>
 
       <div class="column q-gutter-sm">
-        <div class="text-caption text-grey-7 q-px-md">Prioridades</div>
+        <div class="text-caption text-muted q-px-md">Prioridades</div>
         <nav class="column q-gutter-xs" aria-label="Prioridades">
           <q-item
             v-for="option in PRIORITY_OPTIONS"
@@ -60,7 +60,7 @@ const primaryViews: { key: ActivityView; label: string; icon: string }[] = [
             dense
             class="rounded-borders"
             :active="active === option.value"
-            active-class="bg-blue-1 text-primary"
+            active-class="nav-active"
             @click="emit('select', option.value)"
           >
             <q-item-section avatar>
@@ -76,7 +76,7 @@ const primaryViews: { key: ActivityView; label: string; icon: string }[] = [
               />
             </q-item-section>
             <q-item-section side>
-              <span class="text-caption text-grey-7">{{ counts[option.value] }}</span>
+              <span class="text-caption text-muted text-mono">{{ counts[option.value] }}</span>
             </q-item-section>
           </q-item>
         </nav>
@@ -84,8 +84,7 @@ const primaryViews: { key: ActivityView; label: string; icon: string }[] = [
     </div>
 
     <div
-      class="q-pt-md row items-center justify-between text-caption text-grey-7"
-      style="border-top: 1px solid rgba(0, 0, 0, 0.08)"
+      class="q-pt-md row items-center justify-between text-caption text-muted subtle-border-top"
     >
       <span>Espacio personal</span>
       <span>{{ TODAY_LABEL }}</span>

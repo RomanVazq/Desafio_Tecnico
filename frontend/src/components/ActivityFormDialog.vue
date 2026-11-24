@@ -71,13 +71,13 @@ function submit(): void {
 
 <template>
   <q-dialog :model-value="modelValue" @update:model-value="emit('update:modelValue', Boolean($event))">
-    <q-card style="width: 100%; max-width: 480px">
+    <q-card class="surface-card" style="width: 100%; max-width: 480px">
       <q-form @submit.prevent="submit">
         <q-card-section>
           <div class="text-h6 text-headline">
             {{ isDetail ? 'Detalle de la actividad' : 'Editar actividad' }}
           </div>
-          <div v-if="isDetail && activity" class="text-caption text-grey-7 q-mt-xs">
+          <div v-if="isDetail && activity" class="text-caption text-muted q-mt-xs">
             #{{ activity.id }}
           </div>
         </q-card-section>
@@ -138,14 +138,14 @@ function submit(): void {
             @update:model-value="form.due_date = String($event ?? '') || null"
           />
 
-          <div v-if="isDetail && activity" class="column q-gutter-xs text-caption text-grey-7">
+          <div v-if="isDetail && activity" class="column q-gutter-xs text-caption text-muted">
             <div>Creada: {{ formatDateTime(activity.created_at) }}</div>
             <div>Actualizada: {{ formatDateTime(activity.updated_at) }}</div>
           </div>
         </q-card-section>
 
         <q-card-actions align="right" class="wrap">
-          <q-btn flat label="Cerrar" color="grey-7" @click="close" />
+          <q-btn flat label="Cerrar" color="secondary" @click="close" />
           <q-btn
             v-if="isDetail"
             unelevated

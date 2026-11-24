@@ -6,6 +6,55 @@ body {
 
 body {
   font-family: 'Instrument Sans', sans-serif;
+  background: var(--q-tf-background);
+  color: var(--q-tf-on-background);
+}
+
+.surface-page {
+  background: var(--q-tf-surface) !important;
+}
+
+.surface-nav {
+  background: var(--q-tf-surface-container-low) !important;
+}
+
+.surface-card {
+  background: var(--q-tf-surface-container-lowest) !important;
+}
+
+.surface-low {
+  background: var(--q-tf-surface-container-low) !important;
+}
+
+.text-on-surface {
+  color: var(--q-tf-on-surface) !important;
+}
+
+.text-muted {
+  color: var(--q-tf-on-surface-variant) !important;
+}
+
+.text-mono {
+  font-family: 'Source Code Pro', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.subtle-border {
+  border: 1px solid var(--q-tf-outline-variant) !important;
+}
+
+.subtle-border-top {
+  border-top: 1px solid var(--q-tf-outline-variant) !important;
+}
+
+.nav-active {
+  background: var(--q-tf-primary-container) !important;
+  color: var(--q-tf-on-primary-container) !important;
+}
+
+.error-banner {
+  background: var(--q-tf-error-container) !important;
+  color: var(--q-tf-on-error-container) !important;
 }
 
 .activity-title {
@@ -18,9 +67,83 @@ body {
   white-space: nowrap;
 }
 
+.text-headline {
+  font-family: 'Red Hat Text', sans-serif;
+}
+
+.brand-mark {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--q-primary);
+  color: var(--q-tf-on-primary);
+}
+
+.brand-mark--sm {
+  width: 28px;
+  height: 28px;
+}
+
+.filter-chip {
+  border: 1px solid var(--q-tf-outline-variant) !important;
+}
+
+.filter-chip:not(.filter-chip--active) {
+  background: var(--q-tf-surface-container-lowest) !important;
+  color: var(--q-tf-on-surface-variant) !important;
+}
+
+.filter-chip--active {
+  border-color: var(--q-primary) !important;
+}
+
+.filter-clear-label {
+  margin-left: 6px;
+}
+
+.priority-chip {
+  min-width: 64px;
+}
+
+.priority-chip .q-chip__content {
+  justify-content: center;
+}
+
+.rounded-borders {
+  border-radius: 12px !important;
+}
+
+.q-chip {
+  border-radius: 9999px !important;
+}
+
+.q-btn:not(.q-btn--round) {
+  border-radius: 8px;
+}
+
+.q-field--outlined .q-field__control:before {
+  border-color: var(--q-tf-outline-variant) !important;
+}
+
+.q-field--outlined .q-field__control:hover:before {
+  border-color: var(--q-tf-outline) !important;
+}
+
+.q-list--bordered,
+.q-list--separator > .q-item + .q-item {
+  border-color: var(--q-tf-outline-variant) !important;
+}
+
 @media (max-width: 599px) {
   .filter-bar {
     justify-content: flex-start !important;
+  }
+
+  .filter-actions {
+    flex: 0 0 100% !important;
   }
 
   .filter-select {
@@ -66,40 +189,4 @@ body {
     overflow: hidden;
     white-space: normal;
   }
-}
-
-.text-headline {
-  font-family: 'Red Hat Text', sans-serif;
-}
-
-.brand-mark {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--q-primary);
-  color: #fff;
-}
-
-.brand-mark--sm {
-  width: 28px;
-  height: 28px;
-}
-
-.filter-chip {
-  border: 1px solid #cbd2d9 !important;
-}
-
-.filter-chip--active {
-  border-color: var(--q-primary) !important;
-}
-
-.priority-chip {
-  min-width: 64px;
-}
-
-.priority-chip .q-chip__content {
-  justify-content: center;
 }

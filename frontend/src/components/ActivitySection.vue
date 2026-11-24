@@ -27,13 +27,13 @@ const visible = ref(true)
     <div class="row items-center justify-between q-gutter-xs wrap q-px-xs">
       <h2
         class="text-subtitle2 text-weight-medium q-ma-none ellipsis"
-        :class="completed ? 'text-grey-7' : 'text-grey-9'"
+        :class="completed ? 'text-muted' : 'text-on-surface'"
       >
         {{ title }}
       </h2>
 
       <div class="row items-center q-gutter-sm">
-        <span class="text-caption text-grey-7">
+        <span class="text-caption text-muted text-mono">
           {{ activities.length }} {{ activities.length === 1 ? 'tarea' : 'tareas' }}
         </span>
         <q-btn
@@ -48,7 +48,12 @@ const visible = ref(true)
       </div>
     </div>
 
-    <q-list v-if="visible && activities.length" bordered separator class="rounded-borders bg-white">
+    <q-list
+      v-if="visible && activities.length"
+      bordered
+      separator
+      class="rounded-borders surface-card"
+    >
       <ActivityItem
         v-for="activity in activities"
         :key="activity.id"
@@ -63,7 +68,7 @@ const visible = ref(true)
 
     <div
       v-else-if="visible"
-      class="q-pa-lg text-center rounded-borders bg-grey-1 text-grey-7"
+      class="q-pa-lg text-center rounded-borders surface-low text-muted"
     >
       {{ emptyMessage }}
     </div>

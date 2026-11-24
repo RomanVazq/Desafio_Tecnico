@@ -46,15 +46,15 @@ export const PRIORITY_FILTER_OPTIONS: readonly SelectOption<PriorityFilter>[] = 
 ]
 
 export const STATUS_COLORS: Record<ActivityStatus, string> = {
-  pendiente: 'grey-7',
+  pendiente: 'secondary',
   en_progreso: 'primary',
   completada: 'positive',
 }
 
 export const PRIORITY_COLORS: Record<ActivityPriority, string> = {
-  baja: 'grey-6',
+  baja: 'secondary',
   media: 'warning',
-  alta: 'negative',
+  alta: 'accent',
 }
 
 export const PRIORITY_RANK = Object.fromEntries(

@@ -171,24 +171,24 @@ function handleRemove(activity: Activity): void {
       :width="240"
       :breakpoint="1024"
       bordered
-      class="bg-white"
+      class="surface-nav"
       @update:model-value="drawerOpen = Boolean($event)"
     >
       <AppSidebar :counts="counts" :active="activeView" @select="select" />
     </q-drawer>
 
-    <q-header class="bg-white text-dark lt-md" bordered>
+    <q-header class="surface-card text-on-surface lt-md" bordered>
       <q-toolbar :class="$q.screen.lt.sm ? 'q-px-sm' : 'q-px-lg'">
         <q-btn flat dense round icon="menu" class="q-mr-sm" @click="drawerOpen = true" />
         <div class="brand-mark brand-mark--sm q-mr-sm">
           <q-icon name="check_circle" />
         </div>
         <q-toolbar-title class="text-weight-medium">TaskFlow</q-toolbar-title>
-        <span class="text-caption text-grey-7 ellipsis">{{ TODAY_LABEL }}</span>
+        <span class="text-caption text-muted text-mono ellipsis">{{ TODAY_LABEL }}</span>
       </q-toolbar>
     </q-header>
 
-    <q-page-container class="bg-grey-1">
+    <q-page-container class="surface-page">
       <q-page :class="$q.screen.lt.sm ? 'q-pa-sm' : 'q-pa-lg'">
         <div
           class="q-mx-auto column"
@@ -211,14 +211,14 @@ function handleRemove(activity: Activity): void {
 
           <QuickAddForm :loading="saving" @submit="handleQuickAdd" />
 
-          <div v-if="error" class="q-pa-md bg-red-1 text-negative rounded-borders">
+          <div v-if="error" class="q-pa-md error-banner rounded-borders">
             {{ error }}
             <q-btn flat dense label="Reintentar" @click="load" />
           </div>
 
           <div v-if="loading" class="column items-center q-gutter-sm q-py-xl">
             <q-spinner color="primary" size="32px" />
-            <span class="text-caption text-grey-7">Cargando actividades…</span>
+            <span class="text-caption text-muted">Cargando actividades…</span>
           </div>
 
           <template v-else>
@@ -258,7 +258,7 @@ function handleRemove(activity: Activity): void {
 
             <div
               v-else-if="meta && activities.length > 0"
-              class="text-center text-caption text-grey-7 q-pt-md"
+              class="text-center text-caption text-muted q-pt-md"
             >
               Mostrando {{ activities.length }} de {{ meta.total }} actividades
             </div>
