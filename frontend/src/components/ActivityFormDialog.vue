@@ -128,12 +128,33 @@ function submit(): void {
           <q-input
             :model-value="form.due_date ?? ''"
             label="Fecha límite"
-            placeholder="YYYY-MM-DD"
             outlined
             dense
-            :readonly="isDetail"
+            readonly
+            :disable="isDetail"
             @update:model-value="form.due_date = String($event ?? '') || null"
-          />
+          >
+            <template #append>
+              <q-icon
+                v-if="!isDetail && form.due_date"
+                name="close"
+                size="18px"
+                class="cursor-pointer q-mr-sm"
+                @click="form.due_date = null"
+              >
+                <q-tooltip>Quitar fecha</q-tooltip>
+              </q-icon>
+              <q-icon v-if="!isDetail" name="event" class="cursor-pointer">
+                <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                  <q-date
+                    :model-value="form.due_date ?? ''"
+                    mask="YYYY-MM-DD"
+                    @update:model-value="form.due_date = $event || null"
+                  />
+                </q-popup-proxy>
+              </q-icon>
+            </template>
+          </q-input>
 
           <div v-if="isDetail && activity" class="column q-gutter-xs text-caption text-muted">
             <div>Creada: {{ formatDateTime(activity.created_at) }}</div>

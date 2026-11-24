@@ -35,7 +35,7 @@ const primaryViews: { key: ActivityView; label: string; icon: string }[] = [
           :key="item.key"
           clickable
           dense
-          class="rounded-borders"
+          class="sidebar-item rounded-borders"
           :active="active === item.key"
           active-class="nav-active"
           @click="emit('select', item.key)"
@@ -45,7 +45,7 @@ const primaryViews: { key: ActivityView; label: string; icon: string }[] = [
           </q-item-section>
           <q-item-section>{{ item.label }}</q-item-section>
           <q-item-section side>
-            <span class="text-caption text-muted text-mono">{{ counts[item.key] }}</span>
+            <span class="sidebar-count text-caption text-muted text-mono">{{ counts[item.key] }}</span>
           </q-item-section>
         </q-item>
       </nav>
@@ -58,7 +58,7 @@ const primaryViews: { key: ActivityView; label: string; icon: string }[] = [
             :key="option.value"
             clickable
             dense
-            class="rounded-borders"
+            class="sidebar-item rounded-borders"
             :active="active === option.value"
             active-class="nav-active"
             @click="emit('select', option.value)"
@@ -76,7 +76,7 @@ const primaryViews: { key: ActivityView; label: string; icon: string }[] = [
               />
             </q-item-section>
             <q-item-section side>
-              <span class="text-caption text-muted text-mono">{{ counts[option.value] }}</span>
+              <span class="sidebar-count text-caption text-muted text-mono">{{ counts[option.value] }}</span>
             </q-item-section>
           </q-item>
         </nav>

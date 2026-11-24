@@ -75,6 +75,9 @@ function statusLabel(value: ActivityStatus): string {
       >
         {{ activity.description }}
         <span v-if="activity.due_date">· {{ activity.due_date }}</span>
+        <q-tooltip v-if="activity.description" class="tooltip-description">
+          {{ activity.description }}
+        </q-tooltip>
       </q-item-label>
     </q-item-section>
 

@@ -77,6 +77,10 @@ body {
   color: var(--q-tf-on-primary-container) !important;
 }
 
+.sidebar-item.q-item--active .sidebar-count {
+  color: var(--q-tf-on-primary) !important;
+}
+
 .error-banner {
   background: var(--q-tf-error-container) !important;
   color: var(--q-tf-on-error-container) !important;
@@ -100,6 +104,11 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.tooltip-description {
+  max-width: 320px;
+  white-space: normal;
 }
 
 .text-headline {
@@ -133,6 +142,20 @@ body {
 
 .filter-chip--active {
   border-color: var(--q-primary) !important;
+}
+
+.filter-clear-btn,
+.filter-clear-btn.bg-primary {
+  background: var(--q-tf-primary, var(--q-primary)) !important;
+}
+
+.filter-clear-btn,
+.filter-clear-btn.text-white {
+  color: var(--q-tf-on-primary) !important;
+}
+
+.filter-clear-btn:hover:not(:disabled) {
+  opacity: 0.88;
 }
 
 .filter-clear-label {

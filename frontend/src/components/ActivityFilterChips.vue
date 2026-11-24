@@ -108,10 +108,11 @@ function setPriority(value: unknown): void {
       />
 
       <q-btn
-        flat
+        unelevated
         dense
         no-caps
-        color="secondary"
+        color="primary"
+        class="filter-clear-btn"
         aria-label="Limpiar filtros"
         :disable="!hasActiveFilters"
         @click="clearFilters"
