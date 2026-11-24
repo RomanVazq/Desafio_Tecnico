@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { QBtn } from 'quasar'
 import { computed, ref, watch } from 'vue'
 
 import {
@@ -27,6 +28,8 @@ const emit = defineEmits<{
 
 const isDetail = computed(() => props.mode === 'detail')
 const form = ref<ActivityPayload>(createDefaultActivityPayload())
+const chooseDateButton = ref<QBtn | null>(null)
+const datePickerOpen = ref(false)
 
 function formatDateTime(value: string | null): string {
   if (!value) return '—'
@@ -59,6 +62,11 @@ watch(
 
 function close(): void {
   emit('update:modelValue', false)
+}
+
+function clearDueDate(): void {
+  chooseDateButton.value?.$el.focus()
+  form.value.due_date = null
 }
 
 function submit(): void {
@@ -138,24 +146,46 @@ function submit(): void {
             @update:model-value="form.due_date = String($event ?? '') || null"
           >
             <template #append>
-              <q-icon
+              <q-btn
                 v-if="!isDetail && form.due_date"
-                name="close"
-                size="18px"
-                class="cursor-pointer q-mr-sm"
-                @click="form.due_date = null"
+                type="button"
+                flat
+                dense
+                round
+                icon="close"
+                aria-label="Quitar fecha"
+                class="q-mr-xs"
+                @click="clearDueDate"
               >
                 <q-tooltip>Quitar fecha</q-tooltip>
-              </q-icon>
-              <q-icon v-if="!isDetail" name="event" class="cursor-pointer">
-                <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+              </q-btn>
+              <q-btn
+                v-if="!isDetail"
+                ref="chooseDateButton"
+                type="button"
+                flat
+                dense
+                round
+                icon="event"
+                aria-label="Elegir fecha"
+                aria-haspopup="dialog"
+                :aria-expanded="datePickerOpen"
+              >
+                <q-popup-proxy
+                  v-model="datePickerOpen"
+                  role="dialog"
+                  aria-label="Calendario de fecha límite"
+                  cover
+                  transition-show="scale"
+                  transition-hide="scale"
+                >
                   <q-date
                     :model-value="form.due_date ?? ''"
                     mask="YYYY-MM-DD"
                     @update:model-value="form.due_date = $event || null"
                   />
                 </q-popup-proxy>
-              </q-icon>
+              </q-btn>
             </template>
           </q-input>
 

@@ -43,10 +43,10 @@ defineExpose({ reset })
 
 <template>
   <q-form
-    class="row items-center q-gutter-sm q-pa-md rounded-borders surface-card subtle-border"
+    class="quick-add q-pa-md rounded-borders surface-card subtle-border"
     @submit.prevent="handleSubmit"
   >
-    <div class="col-12 row items-center justify-between q-gutter-xs q-mb-xs">
+    <div class="quick-add__header row items-center justify-between">
       <q-icon name="add_circle" color="primary" size="20px" />
 
       <h2
@@ -70,12 +70,14 @@ defineExpose({ reset })
       </q-btn>
     </div>
 
-    <div class="col-12 col-sm column q-gutter-xs">
+    <div class="quick-add__fields column no-wrap">
       <q-input
         v-model="title"
         borderless
         dense
-        placeholder="Añadir una tarea..."
+        label="Título"
+        stack-label
+        placeholder="Ej. Comprar leche"
         :rules="titleRules"
         lazy-rules="ondemand"
       />
@@ -84,13 +86,15 @@ defineExpose({ reset })
         type="textarea"
         borderless
         dense
-        placeholder="Descripción (opcional)"
+        label="Descripción (opcional)"
+        stack-label
+        placeholder="Ej. Pasar al súper de camino a casa"
         class="full-width"
         :input-style="{ height: '72px', resize: 'none', overflowY: 'auto' }"
       />
     </div>
 
-    <div class="col-12 col-sm-auto column q-gutter-sm" style="min-width: 150px">
+    <div class="quick-add__fields column no-wrap">
       <q-select
         v-model="priority"
         :options="PRIORITY_OPTIONS"

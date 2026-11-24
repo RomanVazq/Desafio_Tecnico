@@ -26,7 +26,7 @@ const visible = ref(true)
 </script>
 
 <template>
-  <section class="column q-gutter-sm">
+  <section class="activity-section column no-wrap">
     <div class="row items-center justify-between q-gutter-xs wrap q-px-xs">
       <h2
         class="text-subtitle2 text-weight-medium q-ma-none ellipsis"

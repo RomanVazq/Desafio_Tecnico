@@ -289,11 +289,7 @@ const sectionEvents = {
 
     <q-page-container class="surface-page">
       <q-page :class="$q.screen.lt.sm ? 'q-pa-sm' : 'q-pa-lg'">
-        <div
-          class="q-mx-auto column"
-          :class="$q.screen.lt.sm ? 'q-gutter-md' : $q.screen.lt.lg ? 'q-gutter-lg' : 'q-gutter-xl'"
-          style="max-width: 860px"
-        >
+        <div class="activities-content q-mx-auto column no-wrap">
           <DailyHeader
             :date="TODAY_LABEL"
             :title="ACTIVITY_VIEW_TITLES[activeView]"

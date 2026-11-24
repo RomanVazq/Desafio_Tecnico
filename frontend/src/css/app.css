@@ -1,9 +1,3 @@
-html,
-body {
-  max-width: 100%;
-  overflow-x: hidden;
-}
-
 body {
   font-family: 'Instrument Sans', sans-serif;
   background: var(--q-tf-background);
@@ -86,13 +80,102 @@ body {
   color: var(--q-tf-on-error-container) !important;
 }
 
+.activities-content {
+  max-inline-size: 860px;
+  gap: 16px;
+}
+
+.filter-bar {
+  gap: 16px;
+  container: activity-filters / inline-size;
+}
+
+.filter-chips {
+  gap: 8px;
+}
+
+.filter-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-select,
+.activity-search {
+  min-inline-size: 0;
+}
+
+.filter-actions .filter-clear-btn {
+  min-block-size: 40px;
+}
+
+@container activity-filters (min-width: 36rem) {
+  .filter-actions {
+    grid-template-columns: repeat(2, minmax(0, 140px)) minmax(0, 1fr) max-content;
+  }
+}
+
+.quick-add {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+
+.quick-add__header {
+  grid-column: 1 / -1;
+  gap: 4px;
+}
+
+.quick-add__fields,
+.activity-section {
+  gap: 8px;
+  min-inline-size: 0;
+}
+
 .quick-add__submit {
   min-height: 36px;
 }
 
 @media (min-width: 600px) {
+  .activities-content {
+    gap: 24px;
+  }
+
+  .quick-add {
+    grid-template-columns: minmax(0, 1fr) minmax(150px, auto);
+    align-items: start;
+  }
+
   .quick-add__submit {
     min-width: 140px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .activities-content {
+    gap: 48px;
+  }
+}
+
+.activity-item .activity-actions {
+  min-inline-size: 0;
+}
+
+.activity-controls {
+  gap: 4px;
+}
+
+.activity-control {
+  min-inline-size: 24px;
+  min-block-size: 24px;
+  justify-content: center;
+}
+
+@media (max-width: 599px), (pointer: coarse) {
+  .activity-item .activity-control {
+    min-inline-size: 44px;
+    min-block-size: 44px;
   }
 }
 
@@ -210,26 +293,6 @@ body {
 }
 
 @media (max-width: 599px) {
-  .filter-bar {
-    justify-content: flex-start !important;
-  }
-
-  .filter-actions {
-    flex: 0 0 100% !important;
-  }
-
-  .filter-select {
-    flex: 0 0 140px !important;
-    width: 140px !important;
-    max-width: 140px !important;
-  }
-
-  .activity-search {
-    flex: 0 0 288px !important;
-    width: 288px !important;
-    max-width: 288px !important;
-  }
-
   .activity-item {
     flex-wrap: wrap;
   }

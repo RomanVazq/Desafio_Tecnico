@@ -34,14 +34,15 @@ function statusLabel(value: ActivityStatus): string {
 
 <template>
   <q-item class="activity-item q-px-md q-py-sm">
-    <q-item-section avatar top class="activity-actions" style="min-width: 0">
-      <div class="row items-center q-gutter-xs">
+    <q-item-section avatar top class="activity-actions">
+      <div class="activity-controls row items-center">
         <q-checkbox
           :model-value="selected"
           :disable="selectionDisabled"
           :aria-label="`Seleccionar tarea: ${activity.title}`"
           color="primary"
           dense
+          class="activity-control"
           @update:model-value="emit('select', $event === true)"
         />
         <q-btn
@@ -49,6 +50,7 @@ function statusLabel(value: ActivityStatus): string {
           dense
           round
           icon="schedule"
+          class="activity-control"
           :color="activity.status === 'en_progreso' ? 'tf-progress' : 'tf-muted'"
           @click="emit('progress')"
         >
@@ -62,6 +64,7 @@ function statusLabel(value: ActivityStatus): string {
           dense
           round
           icon="check"
+          class="activity-control"
           :color="activity.status === 'completada' ? 'tf-done' : 'tf-muted'"
           @click="emit('toggle')"
         >
@@ -111,7 +114,7 @@ function statusLabel(value: ActivityStatus): string {
           :label="priorityLabel(activity.priority)"
         />
 
-        <q-btn flat dense round icon="more_vert">
+        <q-btn flat dense round icon="more_vert" class="activity-control">
           <q-menu>
             <q-list style="min-width: 150px">
               <q-item clickable v-close-popup @click="emit('detail')">

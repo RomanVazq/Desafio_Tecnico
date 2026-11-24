@@ -51,8 +51,8 @@ function setPriority(value: unknown): void {
 </script>
 
 <template>
-  <div class="filter-bar row items-center justify-between q-gutter-md wrap">
-    <div class="filter-chips col-12 row q-gutter-sm wrap">
+  <div class="filter-bar column no-wrap">
+    <div class="filter-chips row wrap">
       <q-chip
         v-for="chip in chips"
         :key="chip.value"
@@ -66,7 +66,7 @@ function setPriority(value: unknown): void {
       />
     </div>
 
-    <div class="row items-center q-gutter-sm wrap">
+    <div class="filter-actions">
       <q-select
         :model-value="status"
         :options="STATUS_FILTER_OPTIONS"
@@ -75,8 +75,7 @@ function setPriority(value: unknown): void {
         dense
         outlined
         label="Estado"
-        class="filter-select col-12 col-sm-auto"
-        style="width: 140px"
+        class="filter-select"
         @update:model-value="setStatus"
       />
 
@@ -88,22 +87,19 @@ function setPriority(value: unknown): void {
         dense
         outlined
         label="Prioridad"
-        class="filter-select col-12 col-sm-auto"
-        style="width: 140px"
+        class="filter-select"
         @update:model-value="setPriority"
       />
-    </div>
-
-    <div class="filter-actions row items-center q-gutter-sm wrap">
       <q-input
         :model-value="search"
         dense
         outlined
         clearable
-        placeholder="Buscar tarea..."
+        label="Buscar tareas"
+        stack-label
+        placeholder="Ej. compras"
         prepend-inner-icon="search"
-        class="activity-search col-12 col-sm-auto"
-        style="width: 288px"
+        class="activity-search"
         @update:model-value="emit('update:search', String($event ?? ''))"
       />
 
