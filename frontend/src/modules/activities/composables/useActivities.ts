@@ -9,7 +9,7 @@ import type {
   ActivityStatus,
   ActivityUpdatePayload,
   PaginationMeta,
-} from '../types/activity'
+} from '../types/activity.types'
 
 const SEARCH_DEBOUNCE_MS = 300
 

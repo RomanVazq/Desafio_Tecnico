@@ -7,7 +7,7 @@ import type {
   ItemResponse,
   MessageResponse,
   PaginatedResponse,
-} from '../types/activity'
+} from '../types/activity.types'
 
 
 export interface ActivityRepository {

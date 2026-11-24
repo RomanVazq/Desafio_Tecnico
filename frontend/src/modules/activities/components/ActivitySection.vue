@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 
 import ActivityItem from './ActivityItem.vue'
-import type { Activity } from '../types/activity'
+import type { Activity } from '../types/activity.types'
 
 defineProps<{
   title: string

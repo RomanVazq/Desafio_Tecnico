@@ -7,7 +7,7 @@ import {
   createDefaultActivityPayload,
 } from '../constants/activity'
 import { titleRules } from '../constants/validation'
-import type { Activity, ActivityPayload, ActivityStatus } from '../types/activity'
+import type { Activity, ActivityPayload, ActivityStatus } from '../types/activity.types'
 
 const props = withDefaults(
   defineProps<{

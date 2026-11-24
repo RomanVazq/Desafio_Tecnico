@@ -1,7 +1,7 @@
 import { computed, ref } from 'vue'
 
-import { TODAY_ISO, toIsoDate } from '../constants/theme'
-import { PRIORITIES, type Activity, type ActivityPriority, type ActivityView } from '../types/activity'
+import { TODAY_ISO, toIsoDate } from '../../../constants/theme'
+import { PRIORITIES, type Activity, type ActivityPriority, type ActivityView } from '../types/activity.types'
 
 function isoAfter(days: number): string {
   const date = new Date(`${TODAY_ISO}T00:00:00`)

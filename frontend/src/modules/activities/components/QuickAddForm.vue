@@ -3,9 +3,9 @@ import { ref } from 'vue'
 import { useQuasar } from 'quasar'
 
 import { PRIORITY_OPTIONS } from '../constants/activity'
-import { TODAY_ISO } from '../constants/theme'
+import { TODAY_ISO } from '../../../constants/theme'
 import { titleRules } from '../constants/validation'
-import { PRIORITIES, type ActivityPriority } from '../types/activity'
+import { PRIORITIES, type ActivityPriority } from '../types/activity.types'
 
 defineProps<{
   loading: boolean

@@ -6,7 +6,7 @@ import type {
   ActivityFilterChip,
   PriorityFilter,
   StatusFilter,
-} from '../types/activity'
+} from '../types/activity.types'
 
 const props = defineProps<{
   filter: ActivityFilterChip

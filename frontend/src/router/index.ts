@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import ActivitiesPage from '../pages/ActivitiesPage.vue'
+import ActivitiesPage from '../modules/activities/pages/ActivitiesPage.vue'
 
 const router = createRouter({
   history: createWebHistory(),

@@ -6,7 +6,7 @@ import {
   STATUS_OPTIONS,
   labelFor,
 } from '../constants/activity'
-import type { Activity, ActivityPriority, ActivityStatus } from '../types/activity'
+import type { Activity, ActivityPriority, ActivityStatus } from '../types/activity.types'
 
 defineProps<{
   activity: Activity

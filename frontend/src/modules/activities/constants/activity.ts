@@ -6,7 +6,7 @@ import {
   type ActivityStatus,
   type PriorityFilter,
   type StatusFilter,
-} from '../types/activity'
+} from '../types/activity.types'
 
 export interface SelectOption<T extends string> {
   label: string
