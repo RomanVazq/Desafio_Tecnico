@@ -4,6 +4,7 @@ import {
   PRIORITY_OPTIONS,
   STATUS_COLORS,
   STATUS_OPTIONS,
+  labelFor,
 } from '../constants/activity'
 import type { Activity, ActivityPriority, ActivityStatus } from '../types/activity'
 
@@ -20,11 +21,11 @@ const emit = defineEmits<{
 }>()
 
 function priorityLabel(value: ActivityPriority): string {
-  return PRIORITY_OPTIONS.find((option) => option.value === value)?.label ?? value
+  return labelFor(PRIORITY_OPTIONS, value)
 }
 
 function statusLabel(value: ActivityStatus): string {
-  return STATUS_OPTIONS.find((option) => option.value === value)?.label ?? value
+  return labelFor(STATUS_OPTIONS, value)
 }
 </script>
 

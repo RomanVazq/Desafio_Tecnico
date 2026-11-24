@@ -36,6 +36,7 @@ const {
   error,
   load,
   loadMore,
+  resetFilters,
   create,
   update,
   remove,
@@ -86,6 +87,11 @@ const progress = computed(() => {
 onMounted(() => {
   void load()
 })
+
+function handleClearFilters(): void {
+  chipFilter.value = 'all'
+  void resetFilters()
+}
 
 function handleQuickAdd(
   title: string,
@@ -207,6 +213,7 @@ function handleRemove(activity: Activity): void {
             v-model:search="filters.q"
             v-model:status="filters.status"
             v-model:priority="filters.priority"
+            @clear="handleClearFilters"
           />
 
           <QuickAddForm :loading="saving" @submit="handleQuickAdd" />

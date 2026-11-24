@@ -56,7 +56,7 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     try {
       payload = (await response.json()) as ErrorResponse
     } catch {
-      
+      payload = { message: 'No se pudo leer la respuesta del servidor.' }
     }
 
     throw new ApiError(payload.message, response.status, payload.errors)

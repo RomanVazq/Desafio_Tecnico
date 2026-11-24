@@ -20,6 +20,7 @@ const emit = defineEmits<{
   'update:search': [value: string]
   'update:status': [value: StatusFilter]
   'update:priority': [value: PriorityFilter]
+  clear: []
 }>()
 
 const chips: { value: ActivityFilterChip; label: string }[] = [
@@ -37,10 +38,7 @@ const hasActiveFilters = computed(() =>
 )
 
 function clearFilters(): void {
-  emit('update:filter', 'all')
-  emit('update:search', '')
-  emit('update:status', '')
-  emit('update:priority', '')
+  emit('clear')
 }
 
 function setStatus(value: unknown): void {

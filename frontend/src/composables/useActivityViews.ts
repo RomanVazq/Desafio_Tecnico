@@ -1,13 +1,12 @@
 import { computed, ref } from 'vue'
 
-import { TODAY_ISO } from '../constants/theme'
-import type { Activity, ActivityPriority, ActivityView } from '../types/activity'
+import { TODAY_ISO, toIsoDate } from '../constants/theme'
+import { PRIORITIES, type Activity, type ActivityPriority, type ActivityView } from '../types/activity'
 
 function isoAfter(days: number): string {
   const date = new Date(`${TODAY_ISO}T00:00:00`)
   date.setDate(date.getDate() + days)
-  const pad = (value: number): string => String(value).padStart(2, '0')
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
+  return toIsoDate(date)
 }
 
 const UPCOMING_ISO = isoAfter(7)
@@ -39,13 +38,18 @@ export function useActivityViews(activities: () => Activity[]) {
   const counts = computed<Record<ActivityView, number>>(() => {
     const all = activities()
     const open = (activity: Activity): boolean => activity.status !== 'completada'
+    const byPriority = Object.fromEntries(
+      PRIORITIES.map((priority) => [
+        priority,
+        all.filter((activity) => activity.priority === priority && open(activity)).length,
+      ]),
+    ) as Record<ActivityPriority, number>
+
     return {
       hoy: all.filter((activity) => isToday(activity) && open(activity)).length,
       proximos: all.filter((activity) => isUpcoming(activity) && open(activity)).length,
       todas: all.filter(open).length,
-      baja: all.filter((activity) => activity.priority === 'baja' && open(activity)).length,
-      media: all.filter((activity) => activity.priority === 'media' && open(activity)).length,
-      alta: all.filter((activity) => activity.priority === 'alta' && open(activity)).length,
+      ...byPriority,
     }
   })
 

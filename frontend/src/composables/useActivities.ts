@@ -39,6 +39,7 @@ export function useActivities(repository: ActivityRepository = httpActivityRepos
 
   let requestId = 0
   let debounceTimer: ReturnType<typeof setTimeout> | undefined
+  let suppressFiltersWatch = false
 
   async function fetchPage(targetPage: number, append: boolean): Promise<void> {
     const current = ++requestId
@@ -91,6 +92,15 @@ export function useActivities(repository: ActivityRepository = httpActivityRepos
     return fetchPage(page.value + 1, true)
   }
 
+  function resetFilters(): Promise<void> {
+    suppressFiltersWatch = true
+    clearTimeout(debounceTimer)
+    filters.value = { q: '', status: '', priority: '' }
+    return load().finally(() => {
+      suppressFiltersWatch = false
+    })
+  }
+
   async function mutate(action: () => Promise<unknown>): Promise<boolean> {
     saving.value = true
     error.value = null
@@ -125,17 +135,22 @@ export function useActivities(repository: ActivityRepository = httpActivityRepos
 
   watch(
     () => filters.value.status,
-    () => { void load() },
+    () => {
+      if (!suppressFiltersWatch) void load()
+    },
   )
 
   watch(
     () => filters.value.priority,
-    () => { void load() },
+    () => {
+      if (!suppressFiltersWatch) void load()
+    },
   )
 
   watch(
     () => filters.value.q,
     () => {
+      if (suppressFiltersWatch) return
       clearTimeout(debounceTimer)
       debounceTimer = setTimeout(() => { void load() }, SEARCH_DEBOUNCE_MS)
     },
@@ -156,6 +171,7 @@ export function useActivities(repository: ActivityRepository = httpActivityRepos
     error,
     load,
     loadMore,
+    resetFilters,
     create,
     update,
     remove,

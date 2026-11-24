@@ -3,6 +3,7 @@ import { ref } from 'vue'
 
 import { PRIORITY_OPTIONS } from '../constants/activity'
 import { TODAY_ISO } from '../constants/theme'
+import { titleRules } from '../constants/validation'
 import { PRIORITIES, type ActivityPriority } from '../types/activity'
 
 defineProps<{
@@ -17,10 +18,6 @@ const title = ref('')
 const description = ref('')
 const priority = ref<ActivityPriority>(PRIORITIES[1])
 const dueDate = ref<string | null>(TODAY_ISO)
-
-const titleRules = [
-  (value: string | null) => Boolean(value?.trim()) || 'El título es obligatorio.',
-]
 
 function handleSubmit(): void {
   const value = title.value.trim()

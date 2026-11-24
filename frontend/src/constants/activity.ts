@@ -13,6 +13,10 @@ export interface SelectOption<T extends string> {
   value: T
 }
 
+export function labelFor<T extends string>(options: readonly SelectOption<T>[], value: T): string {
+  return options.find((option) => option.value === value)?.label ?? value
+}
+
 const STATUS_LABELS: Record<ActivityStatus, string> = {
   pendiente: 'Pendiente',
   en_progreso: 'En progreso',

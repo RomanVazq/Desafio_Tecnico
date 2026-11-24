@@ -1,15 +1,6 @@
-export const BRAND = {
-  primary: '#004743',
-  secondary: '#4C6360',
-  accent: '#61321E',
-  dark: '#191C1C',
-  positive: '#1F5F5B',
-  negative: '#BA1A1A',
-  warning: '#87503B',
-  info: '#4C6360',
-} as const
-
 export const PALETTE = {
+  'tf-success': '#1F5F5B',
+  'tf-warning': '#87503B',
   'tf-primary': '#004743',
   'tf-on-primary': '#FFFFFF',
   'tf-primary-container': '#1F5F5B',
@@ -41,10 +32,25 @@ export const PALETTE = {
   'tf-outline-variant': '#BFC8C7',
 } as const
 
-const now = new Date()
-const pad = (value: number): string => String(value).padStart(2, '0')
+export const BRAND = {
+  primary: PALETTE['tf-primary'],
+  secondary: PALETTE['tf-secondary'],
+  accent: PALETTE['tf-tertiary'],
+  dark: PALETTE['tf-on-background'],
+  positive: PALETTE['tf-success'],
+  negative: PALETTE['tf-error'],
+  warning: PALETTE['tf-warning'],
+  info: PALETTE['tf-secondary'],
+} as const
 
-export const TODAY_ISO = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`
+export function toIsoDate(date: Date): string {
+  const pad = (value: number): string => String(value).padStart(2, '0')
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
+}
+
+const now = new Date()
+
+export const TODAY_ISO = toIsoDate(now)
 
 export const TODAY_LABEL = new Intl.DateTimeFormat('es-ES', {
   weekday: 'short',

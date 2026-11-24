@@ -12,7 +12,6 @@ import type {
 
 export interface ActivityRepository {
   list(filters: ActivityFilters, page?: number): Promise<PaginatedResponse<Activity>>
-  find(id: number): Promise<Activity>
   create(payload: ActivityPayload): Promise<Activity>
   update(id: number, payload: ActivityUpdatePayload): Promise<Activity>
   remove(id: number): Promise<string>
@@ -29,11 +28,6 @@ export const httpActivityRepository: ActivityRepository = {
       priority: priority || undefined,
       page: page && page > 1 ? page : undefined,
     })
-  },
-
-  async find(id) {
-    const response = await http.get<ItemResponse<Activity>>(`${RESOURCE}/${id}`)
-    return response.data
   },
 
   async create(payload) {

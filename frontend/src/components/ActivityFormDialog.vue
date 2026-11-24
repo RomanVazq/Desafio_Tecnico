@@ -6,6 +6,7 @@ import {
   STATUS_OPTIONS,
   createDefaultActivityPayload,
 } from '../constants/activity'
+import { titleRules } from '../constants/validation'
 import type { Activity, ActivityPayload, ActivityStatus } from '../types/activity'
 
 const props = withDefaults(
@@ -25,10 +26,6 @@ const emit = defineEmits<{
 
 const isDetail = computed(() => props.mode === 'detail')
 const form = ref<ActivityPayload>(createDefaultActivityPayload())
-
-const titleRules = [
-  (value: string | null) => Boolean(value?.trim()) || 'El título es obligatorio.',
-]
 
 function formatDateTime(value: string | null): string {
   if (!value) return '—'
