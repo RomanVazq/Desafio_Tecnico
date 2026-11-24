@@ -234,6 +234,7 @@ const sectionEvents = {
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-drawer
+      id="navigation-drawer"
       :model-value="isDesktopNavigation || drawerOpen"
       :width="240"
       :behavior="isDesktopNavigation ? 'desktop' : 'mobile'"
@@ -246,7 +247,17 @@ const sectionEvents = {
 
     <q-header v-if="!isDesktopNavigation" class="surface-card text-on-surface" bordered>
       <q-toolbar :class="$q.screen.lt.sm ? 'q-px-sm' : 'q-px-lg'">
-        <q-btn flat dense round icon="menu" class="q-mr-sm" @click="drawerOpen = true" />
+        <q-btn
+          flat
+          dense
+          round
+          icon="menu"
+          class="q-mr-sm"
+          aria-label="Abrir menú de vistas"
+          aria-controls="navigation-drawer"
+          :aria-expanded="drawerOpen"
+          @click="drawerOpen = true"
+        />
         <div class="brand-mark brand-mark--sm q-mr-sm">
           <q-icon name="check_circle" />
         </div>
@@ -257,94 +268,101 @@ const sectionEvents = {
 
     <q-page-container class="surface-page">
       <q-page :class="$q.screen.lt.sm ? 'q-pa-sm' : 'q-pa-lg'">
-        <div class="activities-content q-mx-auto column no-wrap">
-          <DailyHeader
-            :date="TODAY_LABEL"
-            :title="ACTIVITY_VIEW_TITLES[activeView]"
-            :completed="progress.completed"
-            :total="progress.total"
-          />
-
-          <ActivityFilterChips
-            v-model:filter="chipFilter"
-            v-model:search="filters.q"
-            v-model:status="filters.status"
-            v-model:priority="filters.priority"
-            @clear="handleClearFilters"
-          />
-
-          <QuickAddForm ref="quickAddRef" :loading="isQuickAdding" @submit="handleQuickAdd" />
-
-          <div
-            v-if="selectedCount || isBulkDeleting"
-            class="row items-center justify-between q-gutter-sm q-pa-sm rounded-borders surface-low subtle-border"
-          >
-            <span class="text-body2 text-muted" role="status">
-              {{ selectedCount === 1 ? '1 tarea seleccionada' : `${selectedCount} tareas seleccionadas` }}
-            </span>
-            <div class="row items-center q-gutter-xs">
-              <q-btn
-                flat
-                no-caps
-                label="Quitar selección"
-                :disable="isBulkDeleting"
-                @click="clearSelection"
-              />
-              <q-btn
-                unelevated
-                no-caps
-                color="negative"
-                icon="delete_outline"
-                label="Eliminar selección"
-                :loading="isBulkDeleting"
-                :disable="loading"
-                @click="confirmBulkDelete"
-              />
-            </div>
-          </div>
-
-          <div v-if="error" class="q-pa-md error-banner rounded-borders">
-            {{ error }}
-            <q-btn flat dense label="Reintentar" @click="load" />
-          </div>
-
-          <div v-if="loading" class="column items-center q-gutter-sm q-py-xl">
-            <q-spinner color="primary" size="32px" />
-            <span class="text-caption text-muted">Cargando actividades…</span>
-          </div>
-
-          <template v-else>
-            <ActivitySection
-              v-for="section in sections"
-              :key="section.key"
-              :title="section.title"
-              :activities="section.activities"
-              :empty-message="section.emptyMessage"
-              :completed="section.key === 'completed'"
-              v-bind="sectionSelection"
-              v-on="sectionEvents"
+        <main id="contenido-principal" tabindex="-1">
+          <div class="activities-content q-mx-auto column no-wrap">
+            <DailyHeader
+              :date="TODAY_LABEL"
+              :title="ACTIVITY_VIEW_TITLES[activeView]"
+              :completed="progress.completed"
+              :total="progress.total"
             />
 
-            <div v-if="hasMore" class="row justify-center q-pt-md">
-              <q-btn
-                outline
-                color="primary"
-                icon="expand_more"
-                label="Cargar más"
-                :loading="loadingMore"
-                :disable="!canLoadMore"
-                @click="loadMore"
-              />
+            <ActivityFilterChips
+              v-model:filter="chipFilter"
+              v-model:search="filters.q"
+              v-model:status="filters.status"
+              v-model:priority="filters.priority"
+              @clear="handleClearFilters"
+            />
+
+            <QuickAddForm ref="quickAddRef" :loading="isQuickAdding" @submit="handleQuickAdd" />
+
+            <div
+              v-if="selectedCount || isBulkDeleting"
+              class="row items-center justify-between q-gutter-sm q-pa-sm rounded-borders surface-low subtle-border selection-bar"
+            >
+              <span class="text-body2 text-muted" role="status">
+                {{ selectedCount === 1 ? '1 tarea seleccionada' : `${selectedCount} tareas seleccionadas` }}
+              </span>
+              <div class="row items-center q-gutter-xs selection-actions">
+                <q-btn
+                  flat
+                  no-caps
+                  label="Quitar selección"
+                  :disable="isBulkDeleting"
+                  @click="clearSelection"
+                />
+                <q-btn
+                  unelevated
+                  no-caps
+                  color="negative"
+                  icon="delete_outline"
+                  label="Eliminar selección"
+                  :loading="isBulkDeleting"
+                  :disable="loading"
+                  @click="confirmBulkDelete"
+                />
+              </div>
+            </div>
+
+            <div v-if="error" class="q-pa-md error-banner rounded-borders" role="alert">
+              {{ error }}
+              <q-btn flat dense label="Reintentar" @click="load" />
             </div>
 
             <div
-              v-else-if="meta && activities.length > 0"
-              class="text-center text-caption text-muted q-pt-md"
+              v-if="loading"
+              class="column items-center q-gutter-sm q-py-xl"
+              role="status"
+              aria-live="polite"
             >
-              Mostrando {{ activities.length }} de {{ meta.total }} actividades
+              <q-spinner color="primary" size="32px" />
+              <span class="text-caption text-muted">Cargando actividades…</span>
             </div>
-          </template>
-        </div>
+
+            <template v-else>
+              <ActivitySection
+                v-for="section in sections"
+                :key="section.key"
+                :title="section.title"
+                :activities="section.activities"
+                :empty-message="section.emptyMessage"
+                :completed="section.key === 'completed'"
+                v-bind="sectionSelection"
+                v-on="sectionEvents"
+              />
+
+              <div v-if="hasMore" class="row justify-center q-pt-md">
+                <q-btn
+                  outline
+                  color="primary"
+                  icon="expand_more"
+                  label="Cargar más"
+                  :loading="loadingMore"
+                  :disable="!canLoadMore"
+                  @click="loadMore"
+                />
+              </div>
+
+              <div
+                v-else-if="meta && activities.length > 0"
+                class="text-center text-caption text-muted q-pt-md"
+              >
+                Mostrando {{ activities.length }} de {{ meta.total }} actividades
+              </div>
+            </template>
+          </div>
+        </main>
       </q-page>
     </q-page-container>
 

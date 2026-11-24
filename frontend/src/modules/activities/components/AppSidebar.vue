@@ -32,6 +32,7 @@ const emit = defineEmits<{
           dense
           class="sidebar-item rounded-borders"
           :active="active === item.key"
+          :aria-current="active === item.key ? 'page' : undefined"
           active-class="nav-active"
           @click="emit('select', item.key)"
         >
@@ -55,6 +56,7 @@ const emit = defineEmits<{
             dense
             class="sidebar-item rounded-borders"
             :active="active === option.value"
+            :aria-current="active === option.value ? 'page' : undefined"
             active-class="nav-active"
             @click="emit('select', option.value)"
           >

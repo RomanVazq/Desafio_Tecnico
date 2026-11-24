@@ -4,28 +4,63 @@ body {
   color: var(--q-tf-on-background);
 }
 
+.skip-link:where(:not(:focus-visible, :active)) {
+  position: absolute !important;
+  clip-path: inset(50%) !important;
+  overflow: hidden !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  white-space: nowrap !important;
+}
+
+.skip-link:focus-visible {
+  position: fixed;
+  inset-block-start: 8px;
+  inset-inline-start: 8px;
+  z-index: 10000;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--q-tf-surface-container-lowest);
+  color: var(--q-tf-on-surface);
+  font-weight: 600;
+}
+
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 3px solid var(--q-primary);
+  outline-offset: 3px;
+}
+
+@media (forced-colors: active) {
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline-color: Highlight;
+  }
+}
+
 .surface-page {
-  background: var(--q-tf-surface) !important;
+  background: var(--q-tf-surface);
 }
 
 .surface-nav {
-  background: var(--q-tf-surface-container-low) !important;
+  background: var(--q-tf-surface-container-low);
 }
 
 .surface-card {
-  background: var(--q-tf-surface-container-lowest) !important;
+  background: var(--q-tf-surface-container-lowest);
 }
 
 .surface-low {
-  background: var(--q-tf-surface-container-low) !important;
+  background: var(--q-tf-surface-container-low);
 }
 
 .text-on-surface {
-  color: var(--q-tf-on-surface) !important;
+  color: var(--q-tf-on-surface);
 }
 
 .text-muted {
-  color: var(--q-tf-on-surface-variant) !important;
+  color: var(--q-tf-on-surface-variant);
 }
 
 .text-tf-muted {
@@ -59,30 +94,46 @@ body {
 }
 
 .subtle-border {
-  border: 1px solid var(--q-tf-outline-variant) !important;
+  border: 1px solid var(--q-tf-outline-variant);
 }
 
 .subtle-border-top {
-  border-top: 1px solid var(--q-tf-outline-variant) !important;
+  border-top: 1px solid var(--q-tf-outline-variant);
 }
 
 .nav-active {
-  background: var(--q-tf-primary-container) !important;
-  color: var(--q-tf-on-primary-container) !important;
+  background: var(--q-tf-primary-container);
+  color: var(--q-tf-on-primary-container);
+}
+
+.sidebar-item[aria-current='page'] {
+  box-shadow: inset 3px 0 0 var(--q-primary);
+}
+
+@media (forced-colors: active) {
+  .sidebar-item[aria-current='page'] {
+    outline: 1px solid CanvasText;
+    outline-offset: -1px;
+  }
 }
 
 .sidebar-item.q-item--active .sidebar-count {
-  color: var(--q-tf-on-primary) !important;
+  color: var(--q-tf-on-primary);
 }
 
 .error-banner {
-  background: var(--q-tf-error-container) !important;
-  color: var(--q-tf-on-error-container) !important;
+  background: var(--q-tf-error-container);
+  color: var(--q-tf-on-error-container);
 }
 
 .activities-content {
   max-inline-size: 860px;
   gap: 16px;
+}
+
+.selection-bar,
+.selection-actions {
+  flex-wrap: wrap;
 }
 
 .filter-bar {
@@ -229,16 +280,16 @@ body {
 }
 
 .filter-chip {
-  border: 1px solid var(--q-tf-outline-variant) !important;
+  border: 1px solid var(--q-tf-outline-variant);
 }
 
 .filter-chip:not(.filter-chip--active) {
-  background: var(--q-tf-surface-container-lowest) !important;
-  color: var(--q-tf-on-surface-variant) !important;
+  background: var(--q-tf-surface-container-lowest);
+  color: var(--q-tf-on-surface-variant);
 }
 
 .filter-chip--active {
-  border-color: var(--q-primary) !important;
+  border-color: var(--q-primary);
 }
 
 .filter-clear-btn,
@@ -268,11 +319,11 @@ body {
 }
 
 .rounded-borders {
-  border-radius: 12px !important;
+  border-radius: 12px;
 }
 
 .q-chip {
-  border-radius: 9999px !important;
+  border-radius: 9999px;
 }
 
 .q-btn:not(.q-btn--round) {
@@ -280,16 +331,16 @@ body {
 }
 
 .q-field--outlined .q-field__control:before {
-  border-color: var(--q-tf-outline-variant) !important;
+  border-color: var(--q-tf-outline-variant);
 }
 
 .q-field--outlined .q-field__control:hover:before {
-  border-color: var(--q-tf-outline) !important;
+  border-color: var(--q-tf-outline);
 }
 
 .q-list--bordered,
 .q-list--separator > .q-item + .q-item {
-  border-color: var(--q-tf-outline-variant) !important;
+  border-color: var(--q-tf-outline-variant);
 }
 
 @media (max-width: 599px) {

@@ -1,3 +1,4 @@
 <template>
+  <a class="skip-link" href="#contenido-principal">Saltar al contenido principal</a>
   <router-view />
 </template>

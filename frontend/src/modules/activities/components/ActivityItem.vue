@@ -30,6 +30,18 @@ function priorityLabel(value: ActivityPriority): string {
 function statusLabel(value: ActivityStatus): string {
   return labelFor(STATUS_OPTIONS, value)
 }
+
+function progressAction(status: ActivityStatus): string {
+  return status === 'en_progreso' ? 'Volver a pendiente' : 'Marcar en progreso'
+}
+
+function completionAction(status: ActivityStatus): string {
+  return status === 'completada' ? 'Volver a pendiente' : 'Marcar como completada'
+}
+
+function actionsLabel(title: string): string {
+  return `Acciones de ${title}`
+}
 </script>
 
 <template>
@@ -51,12 +63,11 @@ function statusLabel(value: ActivityStatus): string {
           round
           icon="schedule"
           class="activity-control"
+          :aria-label="progressAction(activity.status)"
           :color="activity.status === 'en_progreso' ? 'tf-progress' : 'tf-muted'"
           @click="emit('progress')"
         >
-          <q-tooltip>
-            {{ activity.status === 'en_progreso' ? 'Volver a pendiente' : 'Marcar en progreso' }}
-          </q-tooltip>
+          <q-tooltip>{{ progressAction(activity.status) }}</q-tooltip>
         </q-btn>
 
         <q-btn
@@ -65,12 +76,11 @@ function statusLabel(value: ActivityStatus): string {
           round
           icon="check"
           class="activity-control"
+          :aria-label="completionAction(activity.status)"
           :color="activity.status === 'completada' ? 'tf-done' : 'tf-muted'"
           @click="emit('toggle')"
         >
-          <q-tooltip>
-            {{ activity.status === 'completada' ? 'Volver a pendiente' : 'Marcar como completada' }}
-          </q-tooltip>
+          <q-tooltip>{{ completionAction(activity.status) }}</q-tooltip>
         </q-btn>
       </div>
     </q-item-section>
@@ -114,7 +124,14 @@ function statusLabel(value: ActivityStatus): string {
           :label="priorityLabel(activity.priority)"
         />
 
-        <q-btn flat dense round icon="more_vert" class="activity-control">
+        <q-btn
+          flat
+          dense
+          round
+          icon="more_vert"
+          class="activity-control"
+          :aria-label="actionsLabel(activity.title)"
+        >
           <q-menu>
             <q-list style="min-width: 150px">
               <q-item clickable v-close-popup @click="emit('detail')">

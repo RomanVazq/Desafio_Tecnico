@@ -2,7 +2,11 @@
   <q-layout view="lHh Lpr lFf">
     <q-page-container class="surface-page">
       <q-page class="not-found__page">
-        <section class="not-found__card surface-card rounded-borders subtle-border">
+        <section
+          id="contenido-principal"
+          tabindex="-1"
+          class="not-found__card surface-card rounded-borders subtle-border"
+        >
           <div class="brand-mark not-found__mark q-mx-auto q-mb-md">
             <q-icon name="explore_off" />
           </div>
