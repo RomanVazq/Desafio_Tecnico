@@ -46,18 +46,3 @@ export const BRAND = {
   warning: PALETTE['tf-warning'],
   info: PALETTE['tf-secondary'],
 } as const
-
-export function toIsoDate(date: Date): string {
-  const pad = (value: number): string => String(value).padStart(2, '0')
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
-}
-
-const now = new Date()
-
-export const TODAY_ISO = toIsoDate(now)
-
-export const TODAY_LABEL = new Intl.DateTimeFormat('es-ES', {
-  weekday: 'short',
-  day: 'numeric',
-  month: 'short',
-}).format(now)

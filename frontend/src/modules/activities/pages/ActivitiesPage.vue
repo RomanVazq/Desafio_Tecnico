@@ -9,7 +9,6 @@ import AppSidebar from '../components/AppSidebar.vue'
 import DailyHeader from '../components/DailyHeader.vue'
 import QuickAddForm from '../components/QuickAddForm.vue'
 import { ACTIVITY_VIEW_TITLES, createDefaultActivityPayload } from '../constants/activity'
-import { TODAY_LABEL } from '../../../constants/theme'
 import { useActivities } from '../composables/useActivities'
 import { useActivityViews } from '../composables/useActivityViews'
 import { httpActivityRepository } from '../services/activityRepository'
@@ -19,6 +18,7 @@ import type {
   ActivityPriority,
   ActivityStatus,
 } from '../types/activity.types'
+import { TODAY_LABEL } from '../utils/activityDates'
 
 const $q = useQuasar()
 const activitiesModule = useActivities(httpActivityRepository)

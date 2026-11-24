@@ -1,10 +1,15 @@
 import { computed, ref } from 'vue'
 
-import { TODAY_ISO, toIsoDate } from '../../../constants/theme'
-import { ACTIVITY_VIEWS, PRIORITY_RANK } from '../constants/activity'
-import { PRIORITIES, type Activity, type ActivityFilterChip, type ActivityView } from '../types/activity.types'
+import {
+  ACTIVITY_VIEW_KEYS,
+  PRIORITIES,
+  type Activity,
+  type ActivityFilterChip,
+  type ActivityView,
+} from '../types/activity.types'
+import { TODAY_ISO, daysFromToday } from '../utils/activityDates'
 
-const VIEW_KEYS = [...ACTIVITY_VIEWS.map(({ key }) => key), ...PRIORITIES]
+const VIEW_KEYS = [...ACTIVITY_VIEW_KEYS, ...PRIORITIES]
 
 const SECTIONS = [
   { key: 'undated', title: 'Sin fecha límite', emptyMessage: 'No hay tareas sin fecha límite.' },
@@ -12,13 +17,7 @@ const SECTIONS = [
   { key: 'completed', title: 'Completadas', emptyMessage: 'Todavía no hay tareas completadas.' },
 ] as const
 
-function isoAfter(days: number): string {
-  const date = new Date(`${TODAY_ISO}T00:00:00`)
-  date.setDate(date.getDate() + days)
-  return toIsoDate(date)
-}
-
-const UPCOMING_ISO = isoAfter(7)
+const UPCOMING_ISO = daysFromToday(7)
 
 function isOpen(activity: Activity): boolean {
   return activity.status !== 'completada'
@@ -72,7 +71,7 @@ export function useActivityViews(activities: () => readonly Activity[]) {
 
     if (chip === 'priority') {
       for (const list of Object.values(grouped)) {
-        list.sort((a, b) => PRIORITY_RANK[b.priority] - PRIORITY_RANK[a.priority])
+        list.sort((a, b) => PRIORITIES.indexOf(b.priority) - PRIORITIES.indexOf(a.priority))
       }
     }
 

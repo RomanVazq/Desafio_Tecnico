@@ -10,7 +10,8 @@ export type ActivityPriority = (typeof PRIORITIES)[number]
 /** El valor vacío representa "Todas" y nunca se envía como parámetro a la API. */
 export type PriorityFilter = ActivityPriority | ''
 
-export type ActivityView = 'hoy' | 'proximos' | 'todas' | 'sin_fecha' | ActivityPriority
+export const ACTIVITY_VIEW_KEYS = ['hoy', 'proximos', 'todas', 'sin_fecha'] as const
+export type ActivityView = (typeof ACTIVITY_VIEW_KEYS)[number] | ActivityPriority
 
 export type ActivityFilterChip = 'all' | 'pending' | 'progress' | 'priority'
 

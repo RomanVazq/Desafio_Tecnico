@@ -9,6 +9,7 @@ import {
 } from '../constants/activity'
 import { titleRules } from '../constants/validation'
 import type { Activity, ActivityPayload, ActivityStatus } from '../types/activity.types'
+import { formatDateTime } from '../utils/activityDates'
 
 const props = withDefaults(
   defineProps<{
@@ -30,19 +31,6 @@ const isDetail = computed(() => props.mode === 'detail')
 const form = ref<ActivityPayload>(createDefaultActivityPayload())
 const chooseDateButton = ref<QBtn | null>(null)
 const datePickerOpen = ref(false)
-
-function formatDateTime(value: string | null): string {
-  if (!value) return '—'
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return value
-  return new Intl.DateTimeFormat('es-ES', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  }).format(date)
-}
 
 watch(
   () => props.activity,

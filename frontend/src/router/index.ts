@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 import ActivitiesPage from '../modules/activities/pages/ActivitiesPage.vue'
-import NotFoundPage from '../modules/activities/pages/NotFoundPage.vue'
+import NotFoundPage from '../pages/NotFoundPage.vue'
 
 const router = createRouter({
   history: createWebHistory(),

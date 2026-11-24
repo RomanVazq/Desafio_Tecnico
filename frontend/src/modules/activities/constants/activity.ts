@@ -1,4 +1,5 @@
 import {
+  ACTIVITY_VIEW_KEYS,
   PRIORITIES,
   STATUSES,
   type ActivityPayload,
@@ -50,12 +51,14 @@ export const PRIORITY_FILTER_OPTIONS: readonly SelectOption<PriorityFilter>[] = 
   ...PRIORITY_OPTIONS,
 ]
 
-export const ACTIVITY_VIEWS: readonly { key: ActivityView; label: string; icon: string }[] = [
-  { key: 'hoy', label: 'Hoy', icon: 'today' },
-  { key: 'proximos', label: 'Próximos días', icon: 'date_range' },
-  { key: 'todas', label: 'Todas', icon: 'inbox' },
-  { key: 'sin_fecha', label: 'Sin fecha límite', icon: 'event_busy' },
-]
+const ACTIVITY_VIEW_DISPLAY = {
+  hoy: { label: 'Hoy', icon: 'today' },
+  proximos: { label: 'Próximos días', icon: 'date_range' },
+  todas: { label: 'Todas', icon: 'inbox' },
+  sin_fecha: { label: 'Sin fecha límite', icon: 'event_busy' },
+} satisfies Record<(typeof ACTIVITY_VIEW_KEYS)[number], { label: string; icon: string }>
+
+export const ACTIVITY_VIEWS = ACTIVITY_VIEW_KEYS.map((key) => ({ key, ...ACTIVITY_VIEW_DISPLAY[key] }))
 
 export const ACTIVITY_VIEW_TITLES = {
   ...Object.fromEntries(ACTIVITY_VIEWS.map(({ key, label }) => [key, label])),
@@ -75,10 +78,6 @@ export const PRIORITY_COLORS: Record<ActivityPriority, string> = {
   media: 'tf-medium',
   alta: 'tf-high',
 }
-
-export const PRIORITY_RANK = Object.fromEntries(
-  PRIORITIES.map((priority, index) => [priority, index]),
-) as Record<ActivityPriority, number>
 
 export function createDefaultActivityPayload(): ActivityPayload {
   return {

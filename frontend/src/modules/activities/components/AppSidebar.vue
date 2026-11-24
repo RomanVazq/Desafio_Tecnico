@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ACTIVITY_VIEWS, PRIORITY_COLORS, PRIORITY_OPTIONS } from '../constants/activity'
-import { TODAY_LABEL } from '../../../constants/theme'
 import type { ActivityView } from '../types/activity.types'
+import { TODAY_LABEL } from '../utils/activityDates'
 
 defineProps<{
   counts: Record<ActivityView, number>
