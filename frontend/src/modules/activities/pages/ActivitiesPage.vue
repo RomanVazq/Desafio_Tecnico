@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useQuasar } from 'quasar'
 
 import ActivityFilterChips from '../components/ActivityFilterChips.vue'
@@ -56,6 +56,10 @@ const dialogOpen = ref(false)
 const dialogMode = ref<'edit' | 'detail'>('edit')
 const editing = ref<Activity | null>(null)
 const quickAddRef = ref<InstanceType<typeof QuickAddForm> | null>(null)
+
+watch(dialogOpen, (open) => {
+  if (!open) editing.value = null
+})
 
 function sortByPriority(list: Activity[]): Activity[] {
   if (chipFilter.value !== 'priority') return list
@@ -141,7 +145,7 @@ function handleDialogSubmit(payload: ActivityPayload): void {
   void operation.then((ok) => {
     if (ok) {
       $q.notify({ type: 'positive', message: target ? 'Actividad actualizada.' : 'Actividad creada.' })
-      editing.value = null
+      dialogOpen.value = false
     } else {
       $q.notify({ type: 'negative', message: error.value ?? 'No se pudo guardar la actividad.' })
     }

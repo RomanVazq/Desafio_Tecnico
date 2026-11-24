@@ -62,7 +62,6 @@ function close(): void {
 
 function submit(): void {
   emit('submit', { ...form.value })
-  close()
 }
 </script>
 
