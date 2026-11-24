@@ -121,7 +121,26 @@ class ActivityApiTest extends TestCase
 
     public function test_devuelve_404_si_la_actividad_no_existe(): void
     {
-        $this->getJson('/api/activities/999')->assertNotFound();
+        $this->get('/api/activities/999')
+            ->assertNotFound()
+            ->assertHeader('Content-Type', 'application/json')
+            ->assertJsonStructure(['message']);
+    }
+
+    public function test_devuelve_404_json_si_la_ruta_api_no_existe(): void
+    {
+        $this->get('/api/no-existe')
+            ->assertNotFound()
+            ->assertHeader('Content-Type', 'application/json')
+            ->assertJsonStructure(['message']);
+    }
+
+    public function test_devuelve_422_json_sin_encabezado_accept(): void
+    {
+        $this->get('/api/activities?page=0')
+            ->assertUnprocessable()
+            ->assertHeader('Content-Type', 'application/json')
+            ->assertJsonValidationErrors(['page']);
     }
 
     public function test_puede_actualizar_estado(): void

@@ -92,12 +92,14 @@ export function useActivities(repository: ActivityRepository = httpActivityRepos
   }
 
   function resetFilters(): Promise<void> {
-    suppressFiltersWatch = true
     clearTimeout(debounceTimer)
-    filters.value = { q: '', status: '', priority: '' }
-    return load().finally(() => {
+    suppressFiltersWatch = true
+    try {
+      filters.value = { q: '', status: '', priority: '' }
+    } finally {
       suppressFiltersWatch = false
-    })
+    }
+    return load()
   }
 
   async function mutate(action: () => Promise<unknown>): Promise<boolean> {
@@ -147,26 +149,19 @@ export function useActivities(repository: ActivityRepository = httpActivityRepos
   }
 
   watch(
-    () => filters.value.status,
-    () => {
-      if (!suppressFiltersWatch) void load()
-    },
-  )
-
-  watch(
-    () => filters.value.priority,
-    () => {
-      if (!suppressFiltersWatch) void load()
-    },
-  )
-
-  watch(
-    () => filters.value.q,
-    () => {
+    [() => filters.value.q, () => filters.value.status, () => filters.value.priority],
+    ([, status, priority], [, previousStatus, previousPriority]) => {
       if (suppressFiltersWatch) return
       clearTimeout(debounceTimer)
+
+      if (status !== previousStatus || priority !== previousPriority) {
+        void load()
+        return
+      }
+
       debounceTimer = setTimeout(() => { void load() }, SEARCH_DEBOUNCE_MS)
     },
+    { flush: 'sync' },
   )
 
   onScopeDispose(() => {
