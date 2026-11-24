@@ -18,7 +18,9 @@ frontend/.quasar/
 *.log
 backend/storage/framework/cache/data/
 backend/storage/framework/sessions/
-backend/storage/framework/views/
+backend/storage/framework/views/*
+!backend/storage/framework/views/.gitignore
+!backend/storage/framework/views/.gitkeep
 backend/bootstrap/cache/*
 !backend/bootstrap/cache/.gitignore
 
