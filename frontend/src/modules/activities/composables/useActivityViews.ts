@@ -14,7 +14,7 @@ const UPCOMING_ISO = isoAfter(7)
 export function useActivityViews(activities: () => Activity[]) {
   const activeView = ref<ActivityView>('hoy')
 
-  const isToday = (activity: Activity): boolean =>
+  const isDueNow = (activity: Activity): boolean =>
     Boolean(activity.due_date && activity.due_date <= TODAY_ISO)
 
   const isUpcoming = (activity: Activity): boolean =>
@@ -24,12 +24,23 @@ export function useActivityViews(activities: () => Activity[]) {
         activity.due_date <= UPCOMING_ISO,
     )
 
+  const isUndated = (activity: Activity): boolean => !activity.due_date
+
   const visibleActivities = computed(() => {
     const view = activeView.value
     if (view === 'todas') return activities()
-    if (view === 'hoy') return activities().filter(isToday)
+    if (view === 'hoy') return activities().filter(isDueNow)
     if (view === 'proximos') return activities().filter(isUpcoming)
+    if (view === 'sin_fecha') return activities().filter(isUndated)
     return activities().filter((activity) => activity.priority === (view as ActivityPriority))
+  })
+
+  const undated = computed(() => {
+    const view = activeView.value
+    if (view === 'sin_fecha' || view === 'proximos') return []
+
+    const source = view === 'hoy' || view === 'todas' ? activities() : visibleActivities.value
+    return source.filter((activity) => isUndated(activity) && activity.status !== 'completada')
   })
 
   const pending = computed(() => visibleActivities.value.filter((activity) => activity.status !== 'completada'))
@@ -46,8 +57,11 @@ export function useActivityViews(activities: () => Activity[]) {
     ) as Record<ActivityPriority, number>
 
     return {
-      hoy: all.filter((activity) => isToday(activity) && open(activity)).length,
+      hoy: all.filter(
+        (activity) => (isDueNow(activity) || isUndated(activity)) && open(activity),
+      ).length,
       proximos: all.filter((activity) => isUpcoming(activity) && open(activity)).length,
+      sin_fecha: all.filter((activity) => isUndated(activity) && open(activity)).length,
       todas: all.filter(open).length,
       ...byPriority,
     }
@@ -57,5 +71,5 @@ export function useActivityViews(activities: () => Activity[]) {
     activeView.value = view
   }
 
-  return { activeView, visibleActivities, pending, completed, counts, select }
+  return { activeView, visibleActivities, undated, pending, completed, counts, select }
 }

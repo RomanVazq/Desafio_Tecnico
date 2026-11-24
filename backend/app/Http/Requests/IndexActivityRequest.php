@@ -17,6 +17,7 @@ class IndexActivityRequest extends FormRequest
     {
         return [
             'q' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'page' => ['sometimes', 'integer', 'min:1'],
             'status' => ['sometimes', 'nullable', Rule::in(Activity::STATUSES)],
             'priority' => ['sometimes', 'nullable', Rule::in(Activity::PRIORITIES)],
         ];

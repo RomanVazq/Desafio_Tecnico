@@ -8,7 +8,12 @@ import ActivitySection from '../components/ActivitySection.vue'
 import AppSidebar from '../components/AppSidebar.vue'
 import DailyHeader from '../components/DailyHeader.vue'
 import QuickAddForm from '../components/QuickAddForm.vue'
-import { PRIORITY_RANK, createDefaultActivityPayload } from '../constants/activity'
+import {
+  ACTIVITY_VIEW_TITLES,
+  PRIORITY_RANK,
+  createDefaultActivityPayload,
+  filterByChip,
+} from '../constants/activity'
 import { TODAY_LABEL } from '../../../constants/theme'
 import { useActivities } from '../composables/useActivities'
 import { useActivityViews } from '../composables/useActivityViews'
@@ -19,7 +24,6 @@ import type {
   ActivityPayload,
   ActivityPriority,
   ActivityStatus,
-  ActivityView,
 } from '../types/activity.types'
 
 const $q = useQuasar()
@@ -44,16 +48,7 @@ const {
 } = activitiesModule
 
 const views = useActivityViews(() => activities.value)
-const { activeView, pending, completed, counts, select } = views
-
-const viewTitles: Record<ActivityView, string> = {
-  hoy: 'Hoy',
-  proximos: 'Próximos días',
-  todas: 'Todas',
-  baja: 'Prioridad baja',
-  media: 'Prioridad media',
-  alta: 'Prioridad alta',
-}
+const { activeView, undated, pending, completed, counts, select } = views
 
 const chipFilter = ref<ActivityFilterChip>('all')
 const drawerOpen = ref(false)
@@ -66,20 +61,25 @@ function sortByPriority(list: Activity[]): Activity[] {
   return [...list].sort((a, b) => PRIORITY_RANK[b.priority] - PRIORITY_RANK[a.priority])
 }
 
+const undatedActivities = computed(() =>
+  sortByPriority(filterByChip(undated.value, chipFilter.value)),
+)
+
 const filteredPending = computed(() => {
   let result = pending.value
-  if (chipFilter.value === 'pending') {
-    result = result.filter((activity) => activity.status === 'pendiente')
-  } else if (chipFilter.value === 'progress') {
-    result = result.filter((activity) => activity.status === 'en_progreso')
+  if (activeView.value !== 'sin_fecha') {
+    result = result.filter((activity) => Boolean(activity.due_date))
   }
-  return sortByPriority(result)
+  return sortByPriority(filterByChip(result, chipFilter.value))
 })
 
 const filteredCompleted = computed(() => sortByPriority(completed.value))
 
 const progress = computed(() => {
-  const total = filteredPending.value.length + filteredCompleted.value.length
+  const total =
+    undatedActivities.value.length +
+    filteredPending.value.length +
+    filteredCompleted.value.length
   const done = filteredCompleted.value.length
   return { completed: done, total }
 })
@@ -203,7 +203,7 @@ function handleRemove(activity: Activity): void {
         >
           <DailyHeader
             :date="TODAY_LABEL"
-            :title="viewTitles[activeView]"
+            :title="ACTIVITY_VIEW_TITLES[activeView]"
             :completed="progress.completed"
             :total="progress.total"
           />
@@ -230,9 +230,21 @@ function handleRemove(activity: Activity): void {
 
           <template v-else>
             <ActivitySection
+              v-if="undatedActivities.length"
+              title="Sin fecha límite"
+              :activities="undatedActivities"
+              empty-message="No hay tareas sin fecha límite."
+              @toggle="handleToggle"
+              @progress="handleProgress"
+              @detail="openDetail"
+              @edit="openEdit"
+              @remove="handleRemove"
+            />
+
+            <ActivitySection
               title="Pendientes"
               :activities="filteredPending"
-              empty-message="No quedan tareas pendientes con este filtro."
+              empty-message="¡ Sin tareas pendientes !"
               @toggle="handleToggle"
               @progress="handleProgress"
               @detail="openDetail"

@@ -82,6 +82,22 @@ class ActivityApiTest extends TestCase
         ]);
     }
 
+    public function test_puede_crear_actividad_sin_fecha_limite(): void
+    {
+        $this->postJson('/api/activities', [
+            'title' => 'Sin fecha límite',
+            'status' => Activity::STATUS_PENDING,
+            'priority' => Activity::PRIORITY_LOW,
+        ])
+            ->assertCreated()
+            ->assertJsonPath('data.due_date', null);
+
+        $this->assertDatabaseHas('activities', [
+            'title' => 'Sin fecha límite',
+            'due_date' => null,
+        ]);
+    }
+
     public function test_valida_datos_al_crear(): void
     {
         $this->postJson('/api/activities', [

@@ -100,7 +100,7 @@ function submit(): void {
             @update:model-value="form.description = String($event ?? '') || null"
           />
 
-          <div class="row q-gutter-sm wrap">
+          <div class="form-field-row">
             <q-select
               v-model="form.status"
               :options="STATUS_OPTIONS"
@@ -109,7 +109,6 @@ function submit(): void {
               label="Estado"
               outlined
               dense
-              class="col-12 col-sm"
               :disable="isDetail"
             />
             <q-select
@@ -120,14 +119,13 @@ function submit(): void {
               label="Prioridad"
               outlined
               dense
-              class="col-12 col-sm"
               :disable="isDetail"
             />
           </div>
 
           <q-input
             :model-value="form.due_date ?? ''"
-            label="Fecha límite"
+            label="Fecha límite (opcional)"
             outlined
             dense
             readonly

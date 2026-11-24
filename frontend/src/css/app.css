@@ -111,6 +111,18 @@ body {
   white-space: normal;
 }
 
+.form-field-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+@media (max-width: 599px) {
+  .form-field-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 .text-headline {
   font-family: 'Red Hat Text', sans-serif;
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PRIORITY_COLORS, PRIORITY_OPTIONS } from '../constants/activity'
+import { ACTIVITY_VIEWS, PRIORITY_COLORS, PRIORITY_OPTIONS } from '../constants/activity'
 import { TODAY_LABEL } from '../../../constants/theme'
 import type { ActivityView } from '../types/activity.types'
 
@@ -12,11 +12,6 @@ const emit = defineEmits<{
   select: [view: ActivityView]
 }>()
 
-const primaryViews: { key: ActivityView; label: string; icon: string }[] = [
-  { key: 'hoy', label: 'Hoy', icon: 'today' },
-  { key: 'proximos', label: 'Próximos días', icon: 'date_range' },
-  { key: 'todas', label: 'Todas', icon: 'inbox' },
-]
 </script>
 
 <template>
@@ -31,7 +26,7 @@ const primaryViews: { key: ActivityView; label: string; icon: string }[] = [
 
       <nav class="column q-gutter-xs" aria-label="Vistas principales">
         <q-item
-          v-for="item in primaryViews"
+          v-for="item in ACTIVITY_VIEWS"
           :key="item.key"
           clickable
           dense

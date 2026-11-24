@@ -69,7 +69,7 @@ function handleSubmit(): void {
         v-model="title"
         borderless
         dense
-        placeholder="Añadir una tarea para hoy..."
+        placeholder="Añadir una tarea..."
         :rules="titleRules"
         lazy-rules="ondemand"
       />
@@ -94,7 +94,7 @@ function handleSubmit(): void {
         outlined
         label="Prioridad"
       />
-      <q-input v-model="dueDate" type="date" label="Fecha límite" outlined dense clearable />
+      <q-input v-model="dueDate" type="date" label="Fecha límite (opcional)" outlined dense clearable />
     </div>
   </q-form>
 </template>

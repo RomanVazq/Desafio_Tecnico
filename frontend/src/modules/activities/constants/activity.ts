@@ -1,9 +1,11 @@
 import {
   PRIORITIES,
   STATUSES,
+  type ActivityFilterChip,
   type ActivityPayload,
   type ActivityPriority,
   type ActivityStatus,
+  type ActivityView,
   type PriorityFilter,
   type StatusFilter,
 } from '../types/activity.types'
@@ -48,6 +50,29 @@ export const PRIORITY_FILTER_OPTIONS: readonly SelectOption<PriorityFilter>[] = 
   { label: 'Todas', value: '' },
   ...PRIORITY_OPTIONS,
 ]
+
+export const ACTIVITY_VIEWS: readonly { key: ActivityView; label: string; icon: string }[] = [
+  { key: 'hoy', label: 'Hoy', icon: 'today' },
+  { key: 'proximos', label: 'Próximos días', icon: 'date_range' },
+  { key: 'todas', label: 'Todas', icon: 'inbox' },
+  { key: 'sin_fecha', label: 'Sin fecha límite', icon: 'event_busy' },
+]
+
+export const ACTIVITY_VIEW_TITLES = {
+  ...Object.fromEntries(ACTIVITY_VIEWS.map(({ key, label }) => [key, label])),
+  ...Object.fromEntries(
+    PRIORITY_OPTIONS.map(({ value, label }) => [value, `Prioridad ${label.toLowerCase()}`]),
+  ),
+} as Record<ActivityView, string>
+
+export function filterByChip<T extends { status: ActivityStatus }>(
+  list: readonly T[],
+  chip: ActivityFilterChip,
+): T[] {
+  if (chip === 'pending') return list.filter((activity) => activity.status === 'pendiente')
+  if (chip === 'progress') return list.filter((activity) => activity.status === 'en_progreso')
+  return [...list]
+}
 
 export const STATUS_COLORS: Record<ActivityStatus, string> = {
   pendiente: 'secondary',
