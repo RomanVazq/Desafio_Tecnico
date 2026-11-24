@@ -55,6 +55,7 @@ const drawerOpen = ref(false)
 const dialogOpen = ref(false)
 const dialogMode = ref<'edit' | 'detail'>('edit')
 const editing = ref<Activity | null>(null)
+const quickAddRef = ref<InstanceType<typeof QuickAddForm> | null>(null)
 
 function sortByPriority(list: Activity[]): Activity[] {
   if (chipFilter.value !== 'priority') return list
@@ -107,6 +108,7 @@ function handleQuickAdd(
 
   void create(payload).then((ok) => {
     if (ok) {
+      quickAddRef.value?.reset()
       $q.notify({ type: 'positive', message: 'Actividad agregada.' })
     } else {
       $q.notify({ type: 'negative', message: error.value ?? 'No se pudo agregar la actividad.' })
@@ -168,6 +170,14 @@ function handleRemove(activity: Activity): void {
     })
   })
 }
+
+const sectionEvents = {
+  toggle: handleToggle,
+  progress: handleProgress,
+  detail: openDetail,
+  edit: openEdit,
+  remove: handleRemove,
+}
 </script>
 
 <template>
@@ -216,7 +226,7 @@ function handleRemove(activity: Activity): void {
             @clear="handleClearFilters"
           />
 
-          <QuickAddForm :loading="saving" @submit="handleQuickAdd" />
+          <QuickAddForm ref="quickAddRef" :loading="saving" @submit="handleQuickAdd" />
 
           <div v-if="error" class="q-pa-md error-banner rounded-borders">
             {{ error }}
@@ -234,22 +244,14 @@ function handleRemove(activity: Activity): void {
               title="Sin fecha límite"
               :activities="undatedActivities"
               empty-message="No hay tareas sin fecha límite."
-              @toggle="handleToggle"
-              @progress="handleProgress"
-              @detail="openDetail"
-              @edit="openEdit"
-              @remove="handleRemove"
+              v-on="sectionEvents"
             />
 
             <ActivitySection
               title="Pendientes"
               :activities="filteredPending"
               empty-message="¡ Sin tareas pendientes !"
-              @toggle="handleToggle"
-              @progress="handleProgress"
-              @detail="openDetail"
-              @edit="openEdit"
-              @remove="handleRemove"
+              v-on="sectionEvents"
             />
 
             <ActivitySection
@@ -257,11 +259,7 @@ function handleRemove(activity: Activity): void {
               :activities="filteredCompleted"
               empty-message="Todavía no hay tareas completadas."
               completed
-              @toggle="handleToggle"
-              @progress="handleProgress"
-              @detail="openDetail"
-              @edit="openEdit"
-              @remove="handleRemove"
+              v-on="sectionEvents"
             />
 
             <div v-if="hasMore" class="row justify-center q-pt-md">

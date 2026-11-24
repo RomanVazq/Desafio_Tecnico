@@ -7,7 +7,7 @@ import { TODAY_ISO } from '../../../constants/theme'
 import { titleRules } from '../constants/validation'
 import { PRIORITIES, type ActivityPriority } from '../types/activity.types'
 
-defineProps<{
+const props = defineProps<{
   loading: boolean
 }>()
 
@@ -23,16 +23,22 @@ const priority = ref<ActivityPriority>(PRIORITIES[1])
 const dueDate = ref<string | null>(TODAY_ISO)
 
 function handleSubmit(): void {
+  if (props.loading) return
+
   const value = title.value.trim()
   if (!value) return
 
   const detail = description.value.trim()
   emit('submit', value, detail || null, priority.value, dueDate.value)
+}
 
+function reset(): void {
   title.value = ''
   description.value = ''
   dueDate.value = TODAY_ISO
 }
+
+defineExpose({ reset })
 </script>
 
 <template>
