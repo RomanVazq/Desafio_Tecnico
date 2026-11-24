@@ -36,7 +36,6 @@ const {
   loading,
   loadingMore,
   hasMore,
-  saving,
   error,
   load,
   loadMore,
@@ -52,10 +51,17 @@ const { activeView, undated, pending, completed, counts, select } = views
 
 const chipFilter = ref<ActivityFilterChip>('all')
 const drawerOpen = ref(false)
+const isDesktopNavigation = computed(() => $q.screen.gt.sm)
 const dialogOpen = ref(false)
 const dialogMode = ref<'edit' | 'detail'>('edit')
 const editing = ref<Activity | null>(null)
 const quickAddRef = ref<InstanceType<typeof QuickAddForm> | null>(null)
+const isQuickAdding = ref(false)
+const isDialogSaving = ref(false)
+
+watch(isDesktopNavigation, () => {
+  drawerOpen.value = false
+})
 
 watch(dialogOpen, (open) => {
   if (!open) editing.value = null
@@ -98,26 +104,32 @@ function handleClearFilters(): void {
   void resetFilters()
 }
 
-function handleQuickAdd(
+async function handleQuickAdd(
   title: string,
   description: string | null,
   priority: ActivityPriority,
   dueDate: string | null,
-): void {
+): Promise<void> {
+  if (isQuickAdding.value) return
+  isQuickAdding.value = true
+
   const payload = createDefaultActivityPayload()
   payload.title = title
   payload.description = description
   payload.priority = priority
   payload.due_date = dueDate
 
-  void create(payload).then((ok) => {
+  try {
+    const ok = await create(payload)
     if (ok) {
       quickAddRef.value?.reset()
       $q.notify({ type: 'positive', message: 'Actividad agregada.' })
     } else {
       $q.notify({ type: 'negative', message: error.value ?? 'No se pudo agregar la actividad.' })
     }
-  })
+  } finally {
+    isQuickAdding.value = false
+  }
 }
 
 function openEdit(activity: Activity): void {
@@ -136,20 +148,23 @@ function switchToEdit(): void {
   dialogMode.value = 'edit'
 }
 
-function handleDialogSubmit(payload: ActivityPayload): void {
-  const target = editing.value
-  const operation = target
-    ? update(target.id, payload as Partial<ActivityPayload>)
-    : create(payload)
+async function handleDialogSubmit(payload: ActivityPayload): Promise<void> {
+  if (isDialogSaving.value) return
+  isDialogSaving.value = true
 
-  void operation.then((ok) => {
+  const target = editing.value
+
+  try {
+    const ok = target ? await update(target.id, payload) : await create(payload)
     if (ok) {
       $q.notify({ type: 'positive', message: target ? 'Actividad actualizada.' : 'Actividad creada.' })
       dialogOpen.value = false
     } else {
       $q.notify({ type: 'negative', message: error.value ?? 'No se pudo guardar la actividad.' })
     }
-  })
+  } finally {
+    isDialogSaving.value = false
+  }
 }
 
 function handleToggle(activity: Activity): void {
@@ -187,17 +202,17 @@ const sectionEvents = {
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-drawer
-      :model-value="$q.screen.gt.md || drawerOpen"
+      :model-value="isDesktopNavigation || drawerOpen"
       :width="240"
-      :breakpoint="1024"
+      :behavior="isDesktopNavigation ? 'desktop' : 'mobile'"
       bordered
       class="surface-nav"
-      @update:model-value="drawerOpen = Boolean($event)"
+      @update:model-value="drawerOpen = !isDesktopNavigation && $event"
     >
       <AppSidebar :counts="counts" :active="activeView" @select="select" />
     </q-drawer>
 
-    <q-header class="surface-card text-on-surface lt-md" bordered>
+    <q-header v-if="!isDesktopNavigation" class="surface-card text-on-surface" bordered>
       <q-toolbar :class="$q.screen.lt.sm ? 'q-px-sm' : 'q-px-lg'">
         <q-btn flat dense round icon="menu" class="q-mr-sm" @click="drawerOpen = true" />
         <div class="brand-mark brand-mark--sm q-mr-sm">
@@ -230,7 +245,7 @@ const sectionEvents = {
             @clear="handleClearFilters"
           />
 
-          <QuickAddForm ref="quickAddRef" :loading="saving" @submit="handleQuickAdd" />
+          <QuickAddForm ref="quickAddRef" :loading="isQuickAdding" @submit="handleQuickAdd" />
 
           <div v-if="error" class="q-pa-md error-banner rounded-borders">
             {{ error }}
@@ -292,6 +307,7 @@ const sectionEvents = {
       v-model="dialogOpen"
       :activity="editing"
       :mode="dialogMode"
+      :loading="isDialogSaving"
       @edit="switchToEdit"
       @submit="handleDialogSubmit"
     />

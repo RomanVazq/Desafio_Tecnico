@@ -30,7 +30,6 @@ export function useActivities(repository: ActivityRepository = httpActivityRepos
   const page = ref(1)
   const loading = ref(false)
   const loadingMore = ref(false)
-  const saving = ref(false)
   const error = ref<string | null>(null)
 
   const hasMore = computed(() =>
@@ -102,7 +101,6 @@ export function useActivities(repository: ActivityRepository = httpActivityRepos
   }
 
   async function mutate(action: () => Promise<unknown>): Promise<boolean> {
-    saving.value = true
     error.value = null
 
     try {
@@ -112,8 +110,6 @@ export function useActivities(repository: ActivityRepository = httpActivityRepos
     } catch (caught) {
       error.value = toMessage(caught)
       return false
-    } finally {
-      saving.value = false
     }
   }
 
@@ -167,7 +163,6 @@ export function useActivities(repository: ActivityRepository = httpActivityRepos
     loading,
     loadingMore,
     hasMore,
-    saving,
     error,
     load,
     loadMore,

@@ -13,6 +13,7 @@ const props = withDefaults(
   defineProps<{
     modelValue: boolean
     activity: Activity | null
+    loading: boolean
     mode?: 'edit' | 'detail'
   }>(),
   { mode: 'edit' },
@@ -61,12 +62,17 @@ function close(): void {
 }
 
 function submit(): void {
+  if (props.loading || isDetail.value) return
   emit('submit', { ...form.value })
 }
 </script>
 
 <template>
-  <q-dialog :model-value="modelValue" @update:model-value="emit('update:modelValue', Boolean($event))">
+  <q-dialog
+    :model-value="modelValue"
+    :persistent="loading"
+    @update:model-value="emit('update:modelValue', Boolean($event))"
+  >
     <q-card class="surface-card" style="width: 100%; max-width: 480px">
       <q-form @submit.prevent="submit">
         <q-card-section>
@@ -160,7 +166,7 @@ function submit(): void {
         </q-card-section>
 
         <q-card-actions align="right" class="wrap">
-          <q-btn flat label="Cerrar" color="secondary" @click="close" />
+          <q-btn flat label="Cerrar" color="secondary" :disable="loading" @click="close" />
           <q-btn
             v-if="isDetail"
             unelevated
@@ -169,7 +175,7 @@ function submit(): void {
             color="primary"
             @click="emit('edit')"
           />
-          <q-btn v-else type="submit" unelevated label="Guardar" color="primary" />
+          <q-btn v-else type="submit" unelevated label="Guardar" color="primary" :loading="loading" />
         </q-card-actions>
       </q-form>
     </q-card>
