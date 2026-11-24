@@ -18,26 +18,8 @@ class ActivityController extends Controller
      */
     public function index(IndexActivityRequest $request): ActivityCollection
     {
-        $query = Activity::query();
-
-        if ($request->filled('q')) {
-            $search = '%'.trim($request->input('q')).'%';
-
-            $query->where(function ($builder) use ($search): void {
-                $builder->where('title', 'like', $search)
-                    ->orWhere('description', 'like', $search);
-            });
-        }
-
-        if ($request->filled('status')) {
-            $query->where('status', $request->input('status'));
-        }
-
-        if ($request->filled('priority')) {
-            $query->where('priority', $request->input('priority'));
-        }
-
-        $activities = $query
+        $activities = Activity::query()
+            ->filter($request->validated())
             ->orderByDesc('created_at')
             ->paginate(15);
 
@@ -60,19 +42,16 @@ class ActivityController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id): ActivityResource
+    public function show(Activity $activity): ActivityResource
     {
-        $activity = Activity::findOrFail($id);
-
         return new ActivityResource($activity);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateActivityRequest $request, string $id): ActivityResource
+    public function update(UpdateActivityRequest $request, Activity $activity): ActivityResource
     {
-        $activity = Activity::findOrFail($id);
         $activity->update($request->validated());
 
         return (new ActivityResource($activity->fresh()))

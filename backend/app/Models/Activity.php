@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -32,5 +33,28 @@ class Activity extends Model
         return [
             'due_date' => 'date:Y-m-d',
         ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $filters
+     */
+    public function scopeFilter(Builder $query, array $filters): void
+    {
+        if (filled($filters['q'] ?? null)) {
+            $search = '%'.trim($filters['q']).'%';
+
+            $query->where(function (Builder $builder) use ($search): void {
+                $builder->where('title', 'like', $search)
+                    ->orWhere('description', 'like', $search);
+            });
+        }
+
+        if (filled($filters['status'] ?? null)) {
+            $query->where('status', $filters['status']);
+        }
+
+        if (filled($filters['priority'] ?? null)) {
+            $query->where('priority', $filters['priority']);
+        }
     }
 }
