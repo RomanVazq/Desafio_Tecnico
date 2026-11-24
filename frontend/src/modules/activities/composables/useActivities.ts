@@ -125,6 +125,23 @@ export function useActivities(repository: ActivityRepository = httpActivityRepos
     return mutate(() => repository.remove(id))
   }
 
+  async function removeMany(ids: readonly number[]): Promise<{ removed: number; failed: number }> {
+    let removed = 0
+    let failed = 0
+
+    for (const id of ids) {
+      try {
+        await repository.remove(id)
+        removed++
+      } catch {
+        failed++
+      }
+    }
+
+    if (removed > 0) await load()
+    return { removed, failed }
+  }
+
   function changeStatus(id: number, status: ActivityStatus): Promise<boolean> {
     return update(id, { status })
   }
@@ -170,6 +187,7 @@ export function useActivities(repository: ActivityRepository = httpActivityRepos
     create,
     update,
     remove,
+    removeMany,
     changeStatus,
   }
 }

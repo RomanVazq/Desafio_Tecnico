@@ -43,6 +43,7 @@ const {
   create,
   update,
   remove,
+  removeMany,
   changeStatus,
 } = activitiesModule
 
@@ -58,6 +59,13 @@ const editing = ref<Activity | null>(null)
 const quickAddRef = ref<InstanceType<typeof QuickAddForm> | null>(null)
 const isQuickAdding = ref(false)
 const isDialogSaving = ref(false)
+const selectedIds = ref(new Set<number>())
+const isBulkDeleting = ref(false)
+const selectedCount = computed(() => selectedIds.value.size)
+const sectionSelection = computed(() => ({
+  selectedIds: selectedIds.value,
+  selectionDisabled: isBulkDeleting.value,
+}))
 
 watch(isDesktopNavigation, () => {
   drawerOpen.value = false
@@ -85,6 +93,20 @@ const filteredPending = computed(() => {
 })
 
 const filteredCompleted = computed(() => sortByPriority(completed.value))
+
+watch(
+  [activeView, chipFilter, () => filters.value.q, () => filters.value.status, () => filters.value.priority],
+  clearSelection,
+)
+
+watch([undatedActivities, filteredPending, filteredCompleted], (groups) => {
+  if (!selectedCount.value) return
+
+  const visibleIds = new Set(groups.flat().map((activity) => activity.id))
+  for (const id of selectedIds.value) {
+    if (!visibleIds.has(id)) selectedIds.value.delete(id)
+  }
+})
 
 const progress = computed(() => {
   const total =
@@ -190,7 +212,49 @@ function handleRemove(activity: Activity): void {
   })
 }
 
+function setSelected(id: number, selected: boolean): void {
+  if (isBulkDeleting.value) return
+  if (selected) selectedIds.value.add(id)
+  else selectedIds.value.delete(id)
+}
+
+function clearSelection(): void {
+  selectedIds.value.clear()
+}
+
+async function deleteSelected(ids: readonly number[]): Promise<void> {
+  if (isBulkDeleting.value) return
+  isBulkDeleting.value = true
+
+  try {
+    const { removed, failed } = await removeMany(ids)
+    const result = `Eliminadas: ${removed}.`
+    $q.notify({
+      type: failed ? 'negative' : 'positive',
+      message: failed ? `${result} No se pudieron eliminar: ${failed}.` : result,
+    })
+  } finally {
+    isBulkDeleting.value = false
+  }
+}
+
+function confirmBulkDelete(): void {
+  if (!selectedCount.value || isBulkDeleting.value || loading.value) return
+
+  const ids = [...selectedIds.value]
+  $q.dialog({
+    title: 'Eliminar tareas seleccionadas',
+    message: ids.length === 1
+      ? '¿Eliminar la tarea seleccionada? Esta acción no se puede deshacer.'
+      : `¿Eliminar las ${ids.length} tareas seleccionadas? Esta acción no se puede deshacer.`,
+    cancel: { label: 'Cancelar', flat: true, noCaps: true },
+    ok: { label: 'Eliminar', color: 'negative', unelevated: true, noCaps: true },
+    persistent: true,
+  }).onOk(() => { void deleteSelected(ids) })
+}
+
 const sectionEvents = {
+  select: setSelected,
   toggle: handleToggle,
   progress: handleProgress,
   detail: openDetail,
@@ -247,6 +311,34 @@ const sectionEvents = {
 
           <QuickAddForm ref="quickAddRef" :loading="isQuickAdding" @submit="handleQuickAdd" />
 
+          <div
+            v-if="selectedCount || isBulkDeleting"
+            class="row items-center justify-between q-gutter-sm q-pa-sm rounded-borders surface-low subtle-border"
+          >
+            <span class="text-body2 text-muted" role="status">
+              {{ selectedCount === 1 ? '1 tarea seleccionada' : `${selectedCount} tareas seleccionadas` }}
+            </span>
+            <div class="row items-center q-gutter-xs">
+              <q-btn
+                flat
+                no-caps
+                label="Quitar selección"
+                :disable="isBulkDeleting"
+                @click="clearSelection"
+              />
+              <q-btn
+                unelevated
+                no-caps
+                color="negative"
+                icon="delete_outline"
+                label="Eliminar selección"
+                :loading="isBulkDeleting"
+                :disable="loading"
+                @click="confirmBulkDelete"
+              />
+            </div>
+          </div>
+
           <div v-if="error" class="q-pa-md error-banner rounded-borders">
             {{ error }}
             <q-btn flat dense label="Reintentar" @click="load" />
@@ -263,6 +355,7 @@ const sectionEvents = {
               title="Sin fecha límite"
               :activities="undatedActivities"
               empty-message="No hay tareas sin fecha límite."
+              v-bind="sectionSelection"
               v-on="sectionEvents"
             />
 
@@ -270,6 +363,7 @@ const sectionEvents = {
               title="Pendientes"
               :activities="filteredPending"
               empty-message="¡ Sin tareas pendientes !"
+              v-bind="sectionSelection"
               v-on="sectionEvents"
             />
 
@@ -278,6 +372,7 @@ const sectionEvents = {
               :activities="filteredCompleted"
               empty-message="Todavía no hay tareas completadas."
               completed
+              v-bind="sectionSelection"
               v-on="sectionEvents"
             />
 

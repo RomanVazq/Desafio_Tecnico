@@ -10,9 +10,12 @@ import type { Activity, ActivityPriority, ActivityStatus } from '../types/activi
 
 defineProps<{
   activity: Activity
+  selected: boolean
+  selectionDisabled: boolean
 }>()
 
 const emit = defineEmits<{
+  select: [selected: boolean]
   toggle: []
   progress: []
   detail: []
@@ -33,6 +36,14 @@ function statusLabel(value: ActivityStatus): string {
   <q-item class="activity-item q-px-md q-py-sm">
     <q-item-section avatar top class="activity-actions" style="min-width: 0">
       <div class="row items-center q-gutter-xs">
+        <q-checkbox
+          :model-value="selected"
+          :disable="selectionDisabled"
+          :aria-label="`Seleccionar tarea: ${activity.title}`"
+          color="primary"
+          dense
+          @update:model-value="emit('select', $event === true)"
+        />
         <q-btn
           flat
           dense

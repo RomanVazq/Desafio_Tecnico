@@ -9,9 +9,12 @@ defineProps<{
   activities: Activity[]
   emptyMessage: string
   completed?: boolean
+  selectedIds: ReadonlySet<number>
+  selectionDisabled: boolean
 }>()
 
 const emit = defineEmits<{
+  select: [id: number, selected: boolean]
   toggle: [activity: Activity]
   progress: [activity: Activity]
   detail: [activity: Activity]
@@ -58,6 +61,9 @@ const visible = ref(true)
         v-for="activity in activities"
         :key="activity.id"
         :activity="activity"
+        :selected="selectedIds.has(activity.id)"
+        :selection-disabled="selectionDisabled"
+        @select="emit('select', activity.id, $event)"
         @toggle="emit('toggle', activity)"
         @progress="emit('progress', activity)"
         @detail="emit('detail', activity)"

@@ -101,13 +101,15 @@ body {
 }
 
 .activity-description {
+  contain: inline-size;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .tooltip-description {
-  max-width: 320px;
+  max-width: min(320px, calc(100vw - 24px));
+  overflow-wrap: anywhere;
   white-space: normal;
 }
 
@@ -257,6 +259,7 @@ body {
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     overflow: hidden;
+    overflow-wrap: anywhere;
     white-space: normal;
   }
 }
