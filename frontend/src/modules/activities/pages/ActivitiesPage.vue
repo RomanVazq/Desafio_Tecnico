@@ -8,19 +8,13 @@ import ActivitySection from '../components/ActivitySection.vue'
 import AppSidebar from '../components/AppSidebar.vue'
 import DailyHeader from '../components/DailyHeader.vue'
 import QuickAddForm from '../components/QuickAddForm.vue'
-import {
-  ACTIVITY_VIEW_TITLES,
-  PRIORITY_RANK,
-  createDefaultActivityPayload,
-  filterByChip,
-} from '../constants/activity'
+import { ACTIVITY_VIEW_TITLES, createDefaultActivityPayload } from '../constants/activity'
 import { TODAY_LABEL } from '../../../constants/theme'
 import { useActivities } from '../composables/useActivities'
 import { useActivityViews } from '../composables/useActivityViews'
 import { httpActivityRepository } from '../services/activityRepository'
 import type {
   Activity,
-  ActivityFilterChip,
   ActivityPayload,
   ActivityPriority,
   ActivityStatus,
@@ -36,6 +30,7 @@ const {
   loading,
   loadingMore,
   hasMore,
+  canLoadMore,
   error,
   load,
   loadMore,
@@ -47,10 +42,9 @@ const {
   changeStatus,
 } = activitiesModule
 
-const views = useActivityViews(() => activities.value)
-const { activeView, undated, pending, completed, counts, select } = views
+const { activeView, chipFilter, sections, progress, counts, select } =
+  useActivityViews(() => activities.value)
 
-const chipFilter = ref<ActivityFilterChip>('all')
 const drawerOpen = ref(false)
 const isDesktopNavigation = computed(() => $q.screen.gt.sm)
 const dialogOpen = ref(false)
@@ -75,46 +69,20 @@ watch(dialogOpen, (open) => {
   if (!open) editing.value = null
 })
 
-function sortByPriority(list: Activity[]): Activity[] {
-  if (chipFilter.value !== 'priority') return list
-  return [...list].sort((a, b) => PRIORITY_RANK[b.priority] - PRIORITY_RANK[a.priority])
-}
-
-const undatedActivities = computed(() =>
-  sortByPriority(filterByChip(undated.value, chipFilter.value)),
-)
-
-const filteredPending = computed(() => {
-  let result = pending.value
-  if (activeView.value !== 'sin_fecha') {
-    result = result.filter((activity) => Boolean(activity.due_date))
-  }
-  return sortByPriority(filterByChip(result, chipFilter.value))
-})
-
-const filteredCompleted = computed(() => sortByPriority(completed.value))
-
 watch(
   [activeView, chipFilter, () => filters.value.q, () => filters.value.status, () => filters.value.priority],
   clearSelection,
 )
 
-watch([undatedActivities, filteredPending, filteredCompleted], (groups) => {
+watch(sections, (visibleSections) => {
   if (!selectedCount.value) return
 
-  const visibleIds = new Set(groups.flat().map((activity) => activity.id))
+  const visibleIds = new Set(
+    visibleSections.flatMap(({ activities }) => activities.map(({ id }) => id)),
+  )
   for (const id of selectedIds.value) {
     if (!visibleIds.has(id)) selectedIds.value.delete(id)
   }
-})
-
-const progress = computed(() => {
-  const total =
-    undatedActivities.value.length +
-    filteredPending.value.length +
-    filteredCompleted.value.length
-  const done = filteredCompleted.value.length
-  return { completed: done, total }
 })
 
 onMounted(() => {
@@ -347,27 +315,12 @@ const sectionEvents = {
 
           <template v-else>
             <ActivitySection
-              v-if="undatedActivities.length"
-              title="Sin fecha límite"
-              :activities="undatedActivities"
-              empty-message="No hay tareas sin fecha límite."
-              v-bind="sectionSelection"
-              v-on="sectionEvents"
-            />
-
-            <ActivitySection
-              title="Pendientes"
-              :activities="filteredPending"
-              empty-message="¡ Sin tareas pendientes !"
-              v-bind="sectionSelection"
-              v-on="sectionEvents"
-            />
-
-            <ActivitySection
-              title="Completadas"
-              :activities="filteredCompleted"
-              empty-message="Todavía no hay tareas completadas."
-              completed
+              v-for="section in sections"
+              :key="section.key"
+              :title="section.title"
+              :activities="section.activities"
+              :empty-message="section.emptyMessage"
+              :completed="section.key === 'completed'"
               v-bind="sectionSelection"
               v-on="sectionEvents"
             />
@@ -379,6 +332,7 @@ const sectionEvents = {
                 icon="expand_more"
                 label="Cargar más"
                 :loading="loadingMore"
+                :disable="!canLoadMore"
                 @click="loadMore"
               />
             </div>

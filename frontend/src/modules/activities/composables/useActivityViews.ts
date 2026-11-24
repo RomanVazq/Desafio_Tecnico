@@ -1,7 +1,16 @@
 import { computed, ref } from 'vue'
 
 import { TODAY_ISO, toIsoDate } from '../../../constants/theme'
-import { PRIORITIES, type Activity, type ActivityPriority, type ActivityView } from '../types/activity.types'
+import { ACTIVITY_VIEWS, PRIORITY_RANK } from '../constants/activity'
+import { PRIORITIES, type Activity, type ActivityFilterChip, type ActivityView } from '../types/activity.types'
+
+const VIEW_KEYS = [...ACTIVITY_VIEWS.map(({ key }) => key), ...PRIORITIES]
+
+const SECTIONS = [
+  { key: 'undated', title: 'Sin fecha límite', emptyMessage: 'No hay tareas sin fecha límite.' },
+  { key: 'pending', title: 'Pendientes', emptyMessage: '¡ Sin tareas pendientes !' },
+  { key: 'completed', title: 'Completadas', emptyMessage: 'Todavía no hay tareas completadas.' },
+] as const
 
 function isoAfter(days: number): string {
   const date = new Date(`${TODAY_ISO}T00:00:00`)
@@ -11,65 +20,85 @@ function isoAfter(days: number): string {
 
 const UPCOMING_ISO = isoAfter(7)
 
-export function useActivityViews(activities: () => Activity[]) {
+function isOpen(activity: Activity): boolean {
+  return activity.status !== 'completada'
+}
+
+function matchesView(activity: Activity, view: ActivityView): boolean {
+  const date = activity.due_date
+  switch (view) {
+    case 'hoy':
+      return date ? date <= TODAY_ISO : isOpen(activity)
+    case 'proximos':
+      return Boolean(date && date > TODAY_ISO && date <= UPCOMING_ISO)
+    case 'sin_fecha':
+      return !date
+    case 'todas':
+      return true
+    default:
+      return activity.priority === view
+  }
+}
+
+function matchesChip(activity: Activity, chip: ActivityFilterChip): boolean {
+  if (chip === 'pending') return activity.status === 'pendiente'
+  if (chip === 'progress') return activity.status === 'en_progreso'
+  return true
+}
+
+export function useActivityViews(activities: () => readonly Activity[]) {
   const activeView = ref<ActivityView>('hoy')
+  const chipFilter = ref<ActivityFilterChip>('all')
 
-  const isDueNow = (activity: Activity): boolean =>
-    Boolean(activity.due_date && activity.due_date <= TODAY_ISO)
-
-  const isUpcoming = (activity: Activity): boolean =>
-    Boolean(
-      activity.due_date &&
-        activity.due_date > TODAY_ISO &&
-        activity.due_date <= UPCOMING_ISO,
-    )
-
-  const isUndated = (activity: Activity): boolean => !activity.due_date
-
-  const visibleActivities = computed(() => {
-    const view = activeView.value
-    if (view === 'todas') return activities()
-    if (view === 'hoy') return activities().filter(isDueNow)
-    if (view === 'proximos') return activities().filter(isUpcoming)
-    if (view === 'sin_fecha') return activities().filter(isUndated)
-    return activities().filter((activity) => activity.priority === (view as ActivityPriority))
-  })
-
-  const undated = computed(() => {
-    const view = activeView.value
-    if (view === 'sin_fecha' || view === 'proximos') return []
-
-    const source = view === 'hoy' || view === 'todas' ? activities() : visibleActivities.value
-    return source.filter((activity) => isUndated(activity) && activity.status !== 'completada')
-  })
-
-  const pending = computed(() => visibleActivities.value.filter((activity) => activity.status !== 'completada'))
-  const completed = computed(() => visibleActivities.value.filter((activity) => activity.status === 'completada'))
-
-  const counts = computed<Record<ActivityView, number>>(() => {
-    const all = activities()
-    const open = (activity: Activity): boolean => activity.status !== 'completada'
-    const byPriority = Object.fromEntries(
-      PRIORITIES.map((priority) => [
-        priority,
-        all.filter((activity) => activity.priority === priority && open(activity)).length,
-      ]),
-    ) as Record<ActivityPriority, number>
-
-    return {
-      hoy: all.filter(
-        (activity) => (isDueNow(activity) || isUndated(activity)) && open(activity),
-      ).length,
-      proximos: all.filter((activity) => isUpcoming(activity) && open(activity)).length,
-      sin_fecha: all.filter((activity) => isUndated(activity) && open(activity)).length,
-      todas: all.filter(open).length,
-      ...byPriority,
+  const groups = computed(() => {
+    const grouped: Record<(typeof SECTIONS)[number]['key'], Activity[]> = {
+      undated: [],
+      pending: [],
+      completed: [],
     }
+    const view = activeView.value
+    const chip = chipFilter.value
+
+    for (const activity of activities()) {
+      if (!matchesView(activity, view)) continue
+
+      if (!isOpen(activity)) {
+        grouped.completed.push(activity)
+      } else if (matchesChip(activity, chip)) {
+        const section = !activity.due_date && view !== 'sin_fecha' ? 'undated' : 'pending'
+        grouped[section].push(activity)
+      }
+    }
+
+    if (chip === 'priority') {
+      for (const list of Object.values(grouped)) {
+        list.sort((a, b) => PRIORITY_RANK[b.priority] - PRIORITY_RANK[a.priority])
+      }
+    }
+
+    return grouped
+  })
+
+  const sections = computed(() =>
+    SECTIONS.filter(({ key }) => key !== 'undated' || groups.value.undated.length > 0)
+      .map((section) => ({ ...section, activities: groups.value[section.key] })),
+  )
+
+  const progress = computed(() => {
+    const { undated, pending, completed } = groups.value
+    return { completed: completed.length, total: undated.length + pending.length + completed.length }
+  })
+
+  const counts = computed(() => {
+    const openActivities = activities().filter(isOpen)
+    return Object.fromEntries(
+      VIEW_KEYS.map((view) => [view, openActivities.filter((activity) => matchesView(activity, view)).length]),
+    ) as Record<ActivityView, number>
   })
 
   function select(view: ActivityView): void {
     activeView.value = view
   }
 
-  return { activeView, visibleActivities, undated, pending, completed, counts, select }
+  return { activeView, chipFilter, sections, progress, counts, select }
 }

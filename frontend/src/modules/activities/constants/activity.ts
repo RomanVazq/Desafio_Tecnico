@@ -1,7 +1,6 @@
 import {
   PRIORITIES,
   STATUSES,
-  type ActivityFilterChip,
   type ActivityPayload,
   type ActivityPriority,
   type ActivityStatus,
@@ -64,15 +63,6 @@ export const ACTIVITY_VIEW_TITLES = {
     PRIORITY_OPTIONS.map(({ value, label }) => [value, `Prioridad ${label.toLowerCase()}`]),
   ),
 } as Record<ActivityView, string>
-
-export function filterByChip<T extends { status: ActivityStatus }>(
-  list: readonly T[],
-  chip: ActivityFilterChip,
-): T[] {
-  if (chip === 'pending') return list.filter((activity) => activity.status === 'pendiente')
-  if (chip === 'progress') return list.filter((activity) => activity.status === 'en_progreso')
-  return [...list]
-}
 
 export const STATUS_COLORS: Record<ActivityStatus, string> = {
   pendiente: 'secondary',

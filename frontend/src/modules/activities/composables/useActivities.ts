@@ -22,12 +22,16 @@ function toMessage(error: unknown): string {
   return error instanceof Error ? error.message : 'Ocurrió un error inesperado.'
 }
 
+function sameFilters(left: ActivityFilters, right: ActivityFilters): boolean {
+  return left.q === right.q && left.status === right.status && left.priority === right.priority
+}
 
 export function useActivities(repository: ActivityRepository = httpActivityRepository) {
   const activities = ref<Activity[]>([])
   const meta = ref<PaginationMeta | null>(null)
   const filters = ref<ActivityFilters>({ q: '', status: '', priority: '' })
-  const page = ref(1)
+  const loadedFilters = ref<ActivityFilters | null>(null)
+  const searchPending = ref(false)
   const loading = ref(false)
   const loadingMore = ref(false)
   const error = ref<string | null>(null)
@@ -35,13 +39,28 @@ export function useActivities(repository: ActivityRepository = httpActivityRepos
   const hasMore = computed(() =>
     meta.value !== null && meta.value.current_page < meta.value.last_page,
   )
+  const canLoadMore = computed(() =>
+    hasMore.value &&
+    !loading.value &&
+    !loadingMore.value &&
+    !searchPending.value &&
+    loadedFilters.value !== null &&
+    sameFilters(loadedFilters.value, filters.value),
+  )
 
   let requestId = 0
   let debounceTimer: ReturnType<typeof setTimeout> | undefined
   let suppressFiltersWatch = false
 
-  async function fetchPage(targetPage: number, append: boolean): Promise<void> {
+  async function fetchPage(
+    targetPage: number,
+    requestFilters: ActivityFilters,
+    append: boolean,
+  ): Promise<void> {
     const current = ++requestId
+    const isCurrent = () =>
+      current === requestId && !searchPending.value && sameFilters(requestFilters, filters.value)
+
     if (append) {
       loadingMore.value = true
     } else {
@@ -51,8 +70,8 @@ export function useActivities(repository: ActivityRepository = httpActivityRepos
     error.value = null
 
     try {
-      const response = await repository.list(filters.value, targetPage)
-      if (current !== requestId) return
+      const response = await repository.list(requestFilters, targetPage)
+      if (!isCurrent()) return
 
       if (append) {
         const known = new Set(activities.value.map((activity) => activity.id))
@@ -62,15 +81,16 @@ export function useActivities(repository: ActivityRepository = httpActivityRepos
         ]
       } else {
         activities.value = response.data
+        loadedFilters.value = requestFilters
       }
       meta.value = response.meta
-      page.value = response.meta.current_page
     } catch (caught) {
-      if (current !== requestId) return
+      if (!isCurrent()) return
 
       if (!append) {
         activities.value = []
         meta.value = null
+        loadedFilters.value = null
       }
       error.value = toMessage(caught)
     } finally {
@@ -82,17 +102,17 @@ export function useActivities(repository: ActivityRepository = httpActivityRepos
   }
 
   function load(): Promise<void> {
-    page.value = 1
-    return fetchPage(1, false)
+    clearTimeout(debounceTimer)
+    searchPending.value = false
+    return fetchPage(1, { ...filters.value }, false)
   }
 
   function loadMore(): Promise<void> {
-    if (!hasMore.value || loading.value || loadingMore.value) return Promise.resolve()
-    return fetchPage(page.value + 1, true)
+    if (!canLoadMore.value || !meta.value || !loadedFilters.value) return Promise.resolve()
+    return fetchPage(meta.value.current_page + 1, loadedFilters.value, true)
   }
 
   function resetFilters(): Promise<void> {
-    clearTimeout(debounceTimer)
     suppressFiltersWatch = true
     try {
       filters.value = { q: '', status: '', priority: '' }
@@ -152,13 +172,14 @@ export function useActivities(repository: ActivityRepository = httpActivityRepos
     [() => filters.value.q, () => filters.value.status, () => filters.value.priority],
     ([, status, priority], [, previousStatus, previousPriority]) => {
       if (suppressFiltersWatch) return
-      clearTimeout(debounceTimer)
 
       if (status !== previousStatus || priority !== previousPriority) {
         void load()
         return
       }
 
+      clearTimeout(debounceTimer)
+      searchPending.value = true
       debounceTimer = setTimeout(() => { void load() }, SEARCH_DEBOUNCE_MS)
     },
     { flush: 'sync' },
@@ -175,6 +196,7 @@ export function useActivities(repository: ActivityRepository = httpActivityRepos
     loading,
     loadingMore,
     hasMore,
+    canLoadMore,
     error,
     load,
     loadMore,
