@@ -38,7 +38,7 @@ function statusLabel(value: ActivityStatus): string {
           dense
           round
           icon="schedule"
-          :color="activity.status === 'en_progreso' ? 'primary' : 'secondary'"
+          :color="activity.status === 'en_progreso' ? 'tf-progress' : 'tf-muted'"
           @click="emit('progress')"
         >
           <q-tooltip>
@@ -51,7 +51,7 @@ function statusLabel(value: ActivityStatus): string {
           dense
           round
           icon="check"
-          :color="activity.status === 'completada' ? 'positive' : 'secondary'"
+          :color="activity.status === 'completada' ? 'tf-done' : 'tf-muted'"
           @click="emit('toggle')"
         >
           <q-tooltip>

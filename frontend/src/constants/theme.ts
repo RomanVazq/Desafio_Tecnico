@@ -1,4 +1,8 @@
 export const PALETTE = {
+  'tf-progress': '#2563EB',
+  'tf-done': '#16A34A',
+  'tf-high': '#DC2626',
+  'tf-medium': '#F59E0B',
   'tf-success': '#1F5F5B',
   'tf-warning': '#87503B',
   'tf-primary': '#004743',

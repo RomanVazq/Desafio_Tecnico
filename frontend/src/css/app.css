@@ -34,6 +34,31 @@ body {
   color: var(--q-tf-on-surface-variant) !important;
 }
 
+.text-tf-muted {
+  color: var(--q-tf-outline) !important;
+}
+
+.text-tf-progress {
+  color: var(--q-tf-progress) !important;
+}
+
+.text-tf-done {
+  color: var(--q-tf-done) !important;
+}
+
+.bg-tf-progress {
+  background: var(--q-tf-progress) !important;
+}
+
+.bg-tf-high {
+  background: var(--q-tf-high) !important;
+}
+
+.bg-tf-medium {
+  background: var(--q-tf-medium) !important;
+  color: var(--q-tf-on-background) !important;
+}
+
 .text-mono {
   font-family: 'Source Code Pro', monospace;
   font-variant-numeric: tabular-nums;
@@ -55,6 +80,16 @@ body {
 .error-banner {
   background: var(--q-tf-error-container) !important;
   color: var(--q-tf-on-error-container) !important;
+}
+
+.quick-add__submit {
+  min-height: 36px;
+}
+
+@media (min-width: 600px) {
+  .quick-add__submit {
+    min-width: 140px;
+  }
 }
 
 .activity-title {
